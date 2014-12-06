@@ -1,5 +1,5 @@
 ﻿module Blindfire {
-    class GoldenColorGenerator {
+    export class GoldenColorGenerator {
         //Generate (next) random color given golden ratio conjugate
         private static golden_ratio_conjugate = 0.618033988749895;
         private static h = 0.5

@@ -1431,7 +1431,7 @@ declare module Phaser {
     }
 
     class Group extends PIXI.DisplayObjectContainer {
-
+        _container: any;
         constructor(game: Phaser.Game, parent?: any, name?: string, addToStage?: boolean, enableBody?: boolean, physicsBodyType?: number);
 
         static RETURN_CHILD: number;
@@ -1439,6 +1439,8 @@ declare module Phaser {
         static RETURN_TOTAL: number;
         static SORT_ASCENDING: number;
         static SORT_DESCENDING: number;
+
+        _cachedSprite: any;
 
         angle: number;
         alive: boolean;

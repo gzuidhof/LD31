@@ -27,11 +27,13 @@
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="goldencolorgenerator.ts" />
     <TypeScriptCompile Include="loading\boot.ts" />
     <TypeScriptCompile Include="blindfire.ts" />
     <TypeScriptCompile Include="level.ts" />
     <TypeScriptCompile Include="loading\menu.ts" />
     <TypeScriptCompile Include="loading\preloader.ts" />
+    <TypeScriptCompile Include="memoryrenderer.ts" />
     <TypeScriptCompile Include="typings\phaser.d.ts" />
     <TypeScriptCompile Include="typings\pixi.d.ts" />
   </ItemGroup>

@@ -39,6 +39,7 @@ var Blindfire;
         GoldenColorGenerator.h = 0.5;
         return GoldenColorGenerator;
     })();
+    Blindfire.GoldenColorGenerator = GoldenColorGenerator;
     /**
 * HSV to RGB color conversion
 *
@@ -115,41 +116,33 @@ var Blindfire;
             _super.apply(this, arguments);
             this.i = 0;
         }
+        //renderer: MemoryRenderer;
         Level.prototype.create = function () {
             var game = this.game;
             this.logo = this.game.add.sprite(10, 10, 'logo');
             this.background = this.game.make.sprite(0, 0, 'cat_eyes');
-            var watchWindowBitmap = game.add.bitmapData(game.width, game.height);
-            var bmd = game.add.bitmapData(game.width, game.height);
-            bmd.fill(1, 1, 1, 1);
-            bmd.addToWorld();
-            this.bmd = bmd;
-            this.watchWindowBitmap = watchWindowBitmap;
-            this.watchWindowBitmap.fill(1, 1, 1, 0);
-            var mask = game.add.bitmapData(1, 1);
-            this.mask = mask;
-            this.mask.fill(1, 0, 0, 1);
-            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
-            this.watchWindowBitmap.alphaMask(this.background, this.mask, null, this.maskRect);
+            var block = this.game.make.sprite(0, 0, 'block');
+            this.group = this.game.add.group(block);
+            this.group.add(this.background);
+            this.group.add(block);
+            this.mask = new Phaser.Graphics(this.game, 0, 0);
+            this.mask.beginFill(0xffffff);
+            this.mask.drawRect(-100, -100, 5, 100);
+            this.mask.endFill();
+            this.game.add.existing(block);
+            this.group.mask = this.mask;
+            // var bmd = game.make.bitmapData(game.width, game.height);
+            // bmd.draw(this.group);
+            //bmd.addToWorld();
+            // bmd.fill(0, 0, 0, 0.5);
+            //game.add.image(game.world.centerX, 220, bmd);
+            //this.renderer = new MemoryRenderer(game);
         };
         Level.prototype.update = function () {
-            this.maskRect.centerOn(this.input.x, this.input.y);
-            this.watchWindowBitmap.alphaMask(this.background, this.mask, null, this.maskRect);
-            this.i++;
-            if (this.i % 6 == 0) {
-                this.bmd.blendSaturation();
-                this.bmd.fill(0, 0, 0, 0.030);
-                this.bmd.blendReset();
-            }
-            if (this.i % 18 == 0) {
-                this.bmd.blendOverlay();
-                this.bmd.fill(0.1, 0.1, 0.1, 0.01);
-                this.bmd.blendReset();
-            }
-            this.bmd.draw(this.watchWindowBitmap);
+            //this.renderer.update();
         };
         Level.prototype.render = function () {
-            this.watchWindowBitmap.clear();
+            //this.renderer.render();
         };
         return Level;
     })(Phaser.State);
@@ -219,6 +212,7 @@ var Blindfire;
             this.load.image('logo', 'assets/logo.png');
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('cat_eyes', 'assets/cat_eyes.jpg');
+            this.load.image('block', 'assets/block.png');
         };
         Preloader.prototype.create = function () {
             //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -232,5 +226,58 @@ var Blindfire;
         return Preloader;
     })(Phaser.State);
     Blindfire.Preloader = Preloader;
+})(Blindfire || (Blindfire = {}));
+var Blindfire;
+(function (Blindfire) {
+    var MemoryRenderer = (function () {
+        function MemoryRenderer(game) {
+            this.game = game;
+            this.init(game);
+        }
+        MemoryRenderer.prototype.init = function (game) {
+            this.gameGroup = this.game.make.group(null);
+            var watchWindowBitmap = game.add.bitmapData(game.width, game.height);
+            var bmd = game.add.bitmapData(game.width, game.height);
+            bmd.fill(1, 1, 1, 1);
+            bmd.addToWorld();
+            this.bmd = bmd;
+            this.watchWindowBitmap = watchWindowBitmap;
+            this.watchWindowBitmap.addToWorld();
+            //this.watchWindowBitmap.fill(1, 1, 0, 0);
+            var mask = game.add.bitmapData(1, 1);
+            this.mask = mask;
+            this.mask.fill(1, 0, 0, 1);
+            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
+            //this.watchWindowBitmap.alphaMask(this.background, this.mask, null, this.maskRect);
+        };
+        MemoryRenderer.prototype.add = function (e) {
+            this.gameGroup.add(e);
+        };
+        MemoryRenderer.prototype.update = function () {
+            var game = this.game;
+            var t = this.gameGroup.generateTexture(null, null, game.renderer);
+            var s = new Phaser.Sprite(game, 0, 0, t);
+            this.frame++;
+            this.maskRect.centerOn(this.game.input.x, this.game.input.y);
+            // this.watchWindowBitmap.alphaMask(image, this.mask, null, this.maskRect);
+            this.watchWindowBitmap.draw(s);
+            if (this.frame % 6 == 0) {
+                this.bmd.blendSaturation();
+                this.bmd.fill(0, 0, 0, 0.030);
+                this.bmd.blendReset();
+            }
+            if (this.frame % 18 == 0) {
+                this.bmd.blendOverlay();
+                this.bmd.fill(0.1, 0.1, 0.1, 0.01);
+                this.bmd.blendReset();
+            }
+            this.bmd.draw(this.watchWindowBitmap);
+        };
+        MemoryRenderer.prototype.render = function () {
+            this.watchWindowBitmap.clear();
+        };
+        return MemoryRenderer;
+    })();
+    Blindfire.MemoryRenderer = MemoryRenderer;
 })(Blindfire || (Blindfire = {}));
 //# sourceMappingURL=blindfire.js.map

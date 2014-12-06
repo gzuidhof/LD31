@@ -14,6 +14,7 @@
             this.load.image('logo', 'assets/logo.png');
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('cat_eyes', 'assets/cat_eyes.jpg');
+            this.load.image('block', 'assets/block.png');
             
 
         }
