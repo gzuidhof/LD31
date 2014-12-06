@@ -26,6 +26,89 @@ var Blindfire;
 })(Blindfire || (Blindfire = {}));
 var Blindfire;
 (function (Blindfire) {
+    var GoldenColorGenerator = (function () {
+        function GoldenColorGenerator() {
+        }
+        GoldenColorGenerator.generateColor = function () {
+            this.h = this.golden_ratio_conjugate;
+            this.h %= 1;
+            hsvToRgb(this.h, 0.9, 0.95);
+        };
+        //Generate (next) random color given golden ratio conjugate
+        GoldenColorGenerator.golden_ratio_conjugate = 0.618033988749895;
+        GoldenColorGenerator.h = 0.5;
+        return GoldenColorGenerator;
+    })();
+    /**
+* HSV to RGB color conversion
+*
+* H runs from 0 to 360 degrees
+* S and V run from 0 to 100
+*
+* Ported from the excellent java algorithm by Eugene Vishnevsky at:
+* http://www.cs.rit.edu/~ncs/color/t_convert.html
+*/
+    function hsvToRgb(h, s, v) {
+        var r, g, b;
+        var i;
+        var f, p, q, t;
+        // Make sure our arguments stay in-range
+        h = Math.max(0, Math.min(360, h));
+        s = Math.max(0, Math.min(100, s));
+        v = Math.max(0, Math.min(100, v));
+        // We accept saturation and value arguments from 0 to 100 because that's
+        // how Photoshop represents those values. Internally, however, the
+        // saturation and value are calculated from a range of 0 to 1. We make
+        // That conversion here.
+        s /= 100;
+        v /= 100;
+        if (s == 0) {
+            // Achromatic (grey)
+            r = g = b = v;
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+        h /= 60; // sector 0 to 5
+        i = Math.floor(h);
+        f = h - i; // factorial part of h
+        p = v * (1 - s);
+        q = v * (1 - s * f);
+        t = v * (1 - s * (1 - f));
+        switch (i) {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            default:
+                r = v;
+                g = p;
+                b = q;
+        }
+        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    }
+})(Blindfire || (Blindfire = {}));
+var Blindfire;
+(function (Blindfire) {
     var Level = (function (_super) {
         __extends(Level, _super);
         function Level() {
@@ -36,7 +119,6 @@ var Blindfire;
             var game = this.game;
             this.logo = this.game.add.sprite(10, 10, 'logo');
             this.background = this.game.make.sprite(0, 0, 'cat_eyes');
-            //this.background.mask = screenMask;
             var watchWindowBitmap = game.add.bitmapData(game.width, game.height);
             var bmd = game.add.bitmapData(game.width, game.height);
             bmd.fill(1, 1, 1, 1);
@@ -49,7 +131,6 @@ var Blindfire;
             this.mask.fill(1, 0, 0, 1);
             this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
             this.watchWindowBitmap.alphaMask(this.background, this.mask, null, this.maskRect);
-            //watchWindowBitmap.addToWorld();
         };
         Level.prototype.update = function () {
             this.maskRect.centerOn(this.input.x, this.input.y);
@@ -59,75 +140,21 @@ var Blindfire;
                 this.bmd.blendSaturation();
                 this.bmd.fill(0, 0, 0, 0.030);
                 this.bmd.blendReset();
-                this.bmd.draw(this.watchWindowBitmap);
             }
             if (this.i % 18 == 0) {
                 this.bmd.blendOverlay();
                 this.bmd.fill(0.1, 0.1, 0.1, 0.01);
                 this.bmd.blendReset();
-                this.bmd.draw(this.watchWindowBitmap);
             }
+            this.bmd.draw(this.watchWindowBitmap);
         };
         Level.prototype.render = function () {
-            this.bmd.draw(this.watchWindowBitmap);
             this.watchWindowBitmap.clear();
-            //this.watchWindowBitmap.clear();
-            //this.watchWindowBitmap.setHSL(0, 0, 1);
-            // this.watchWindowBitmap.draw(this.
-            //this.watchWindowBitmap.fill(1, 1, 1, 0.01);
-            //this.watchWindowBitmap.clear();
-            //this.watchWindowBitmap.fill(1, 1, 1, 0);
-            //var renderTexture = new PIXI.RenderTexture(this.game.width, this.game.height);
         };
         return Level;
     })(Phaser.State);
     Blindfire.Level = Level;
 })(Blindfire || (Blindfire = {}));
-/*
-    -
-
-
-
-*/
-// Fragment shaders are small programs that run on the graphics card and alter
-// the pixels of a texture. Every framework implements shaders differently but
-// the concept is the same. This shader takes the lightning texture and alters
-// the pixels so that it appears to be glowing. Shader programming itself is
-// beyond the scope of this tutorial.
-//
-// There are a ton of good resources out there to learn it. Odds are that your
-// framework already includes many of the most popular shaders out of the box.
-//
-// This is an OpenGL/WebGL feature. Because it runs in your web browser
-// you need a browser that support WebGL for this to work.
-var Glow = function (game) {
-    Phaser.Filter.call(this, game);
-    this.fragmentSrc = [
-        "precision lowp float;",
-        "varying vec2 vTextureCoord;",
-        "varying vec4 vColor;",
-        'uniform sampler2D uSampler;',
-        'void main() {',
-        'vec4 sum = vec4(0);',
-        'vec2 texcoord = vTextureCoord;',
-        'for(int xx = -4; xx <= 4; xx++) {',
-        'for(int yy = -3; yy <= 3; yy++) {',
-        'float dist = sqrt(float(xx*xx) + float(yy*yy));',
-        'float factor = 0.0;',
-        'if (dist == 0.0) {',
-        'factor = 2.0;',
-        '} else {',
-        'factor = 2.0/abs(float(dist));',
-        '}',
-        'sum += texture2D(uSampler, texcoord + vec2(xx, yy) * 0.002) * factor;',
-        '}',
-        '}',
-        'gl_FragColor = sum * 0.025 + texture2D(uSampler, texcoord);',
-        '}'
-    ];
-};
-Glow.prototype = Object.create(Phaser.Filter.prototype);
-Glow.prototype.constructor = Glow;
 var Blindfire;
 (function (Blindfire) {
     var Boot = (function (_super) {
