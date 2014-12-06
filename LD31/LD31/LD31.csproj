@@ -20,13 +20,10 @@
   <ItemGroup>
     <Content Include="app.css" />
     <Content Include="index.html" />
-    <Content Include="assets\level1.png" />
     <Content Include="assets\loader.png" />
     <Content Include="assets\logo.png" />
     <Content Include="phaser.js" />
-    <Content Include="assets\simon.png" />
     <Content Include="assets\title.mp3" />
-    <Content Include="assets\titlepage.jpg" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>

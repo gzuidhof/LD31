@@ -3,7 +3,8 @@
     class Blindfire extends Phaser.Game {
 
         constructor() {
-            super(800, 600, Phaser.AUTO, 'content', null);
+            super(800, 600, Phaser.AUTO, 'content', null, true);
+            this.renderer = new PIXI.WebGLRenderer(800, 600, { transparent: true, clearBeforeRender: false });
 
             this.state.add('Boot', Boot, false);
             this.state.add('Preloader', Preloader, false);

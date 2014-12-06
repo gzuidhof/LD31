@@ -1173,7 +1173,7 @@ declare module Phaser {
         physicsConfig: any;
         preserveDrawingBuffer: Boolean;
         raf: Phaser.RequestAnimationFrame;
-        renderer: number;
+        renderer: any;
         renderType: number;
         rnd: Phaser.RandomDataGenerator;
         scale: Phaser.ScaleManager;
