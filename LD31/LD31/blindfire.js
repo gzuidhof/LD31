@@ -30,9 +30,13 @@ var Blindfire;
         function GoldenColorGenerator() {
         }
         GoldenColorGenerator.generateColor = function () {
-            this.h = this.golden_ratio_conjugate;
+            this.h += this.golden_ratio_conjugate;
             this.h %= 1;
-            hsvToRgb(this.h * 360, 0.9 * 100, 0.95 * 100);
+            return hsvToRgb(this.h * 360, 0.9 * 100, 0.95 * 100);
+        };
+        GoldenColorGenerator.generateColor32bitEncoded = function () {
+            var col = this.generateColor;
+            return col[0] << 16 | col[1] << 8 | col[2];
         };
         //Generate (next) random color given golden ratio conjugate
         GoldenColorGenerator.golden_ratio_conjugate = 0.618033988749895;
@@ -110,11 +114,16 @@ var Blindfire;
 })(Blindfire || (Blindfire = {}));
 var Blindfire;
 (function (Blindfire) {
-    var Guidable = (function () {
-        function Guidable() {
+    var Guidable = (function (_super) {
+        __extends(Guidable, _super);
+        function Guidable(game, x, y, key, color) {
+            _super.call(this, game, x, y, key);
+            this.tint = color;
         }
+        Guidable.prototype.update = function () {
+        };
         return Guidable;
-    })();
+    })(Phaser.Sprite);
     Blindfire.Guidable = Guidable;
 })(Blindfire || (Blindfire = {}));
 var Blindfire;
@@ -126,7 +135,7 @@ var Blindfire;
             this.i = 0;
             this.maxSpeed = 10;
             this.velocity = new Phaser.Point(0, 0);
-            this.snapiness = 0.01;
+            this.snapiness = 0.004;
         }
         Level.prototype.create = function () {
             var game = this.game;
@@ -150,16 +159,16 @@ var Blindfire;
                 desiredVel.normalize().setMagnitude(this.maxSpeed);
             }
             this.velocity = this.interpPoints(this.velocity, desiredVel, this.game.time.elapsed * this.snapiness);
-            // console.log(curPos);
-            // console.log(mousePos);
-            //console.log(desiredVel);
-            //console.log(desiredVel.getMagnitude());
             this.maskRect.centerOn(curPos.x + this.velocity.x, (curPos.y + this.velocity.y));
-            //            this.maskRect.centerX = (curPos.y + this.velocity.y);
             this.renderer.update();
         };
         Level.prototype.render = function () {
+            var color = Blindfire.GoldenColorGenerator.generateColor();
+            this.renderer.add(new Blindfire.Guidable(this.game, this.game.world.randomX, this.game.world.randomY, 'block', this.RGBtoHEX(color[0], color[1], color[2])));
             this.renderer.render();
+        };
+        Level.prototype.RGBtoHEX = function (r, g, b) {
+            return r << 16 | g << 8 | b;
         };
         Level.prototype.interpPoints = function (a, b, t) {
             return a.setTo(this.interp(a.x, b.x, t), this.interp(a.y, b.y, t));
@@ -286,11 +295,11 @@ var Blindfire;
             this.gameBmd.clear();
             //this.watchWindowBitmap.clear();
             this.drawObjects.forEach(function (val) {
-                _this.gameBmd.blendAdd();
+                // this.gameBmd.blendReset();
                 _this.gameBmd.draw(val, val.x, val.y);
             });
             this.watchWindowBitmap = this.watchWindowBitmap.alphaMask(this.gameBmd, this.mask, null, this.maskRect);
-            if (this.frame % 6 == 0) {
+            if (this.frame % 2 == 0) {
                 this.bmd.blendSaturation();
                 this.bmd.fill(0, 0, 0, 0.030);
                 this.bmd.blendReset();

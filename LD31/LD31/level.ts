@@ -34,7 +34,7 @@
         i = 0;
         maxSpeed = 10;
         velocity: Phaser.Point = new Phaser.Point(0,0);
-        snapiness: number = 0.01;
+        snapiness: number = 0.004;
         
 
         update() {
@@ -49,19 +49,23 @@
 
 
             this.velocity = this.interpPoints(this.velocity, desiredVel, this.game.time.elapsed * this.snapiness);
-
-           // console.log(curPos);
-           // console.log(mousePos);
-            //console.log(desiredVel);
-            //console.log(desiredVel.getMagnitude());
             this.maskRect.centerOn (curPos.x + this.velocity.x, (curPos.y + this.velocity.y)) ;
-//            this.maskRect.centerX = (curPos.y + this.velocity.y);
 
             this.renderer.update();
         }
 
         render() {
+
+            var color = GoldenColorGenerator.generateColor();
+
+            this.renderer.add(new Guidable(this.game, this.game.world.randomX, this.game.world.randomY, 'block', this.RGBtoHEX(color[0], color[1], color[2])));
             this.renderer.render();
+        }
+
+        RGBtoHEX(r, g, b) {
+
+            return r << 16 | g << 8 | b;
+
         }
 
         interpPoints(a: Phaser.Point, b: Phaser.Point, t) {

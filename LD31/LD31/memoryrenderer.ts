@@ -68,7 +68,7 @@
             this.gameBmd.clear();
             //this.watchWindowBitmap.clear();
             this.drawObjects.forEach((val) => {
-                this.gameBmd.blendAdd();
+               // this.gameBmd.blendReset();
                 this.gameBmd.draw(val, val.x, val.y);
             });
 
@@ -76,7 +76,7 @@
 
 
 
-            if (this.frame % 6 == 0) {
+            if (this.frame % 2 == 0) {
                 this.bmd.blendSaturation();
                 this.bmd.fill(0, 0, 0, 0.030);
                 this.bmd.blendReset();

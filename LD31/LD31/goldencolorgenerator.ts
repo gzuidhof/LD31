@@ -6,10 +6,14 @@
 
 
         static generateColor() {
-            this.h = this.golden_ratio_conjugate;
+            this.h += this.golden_ratio_conjugate;
             this.h %= 1;
-            hsvToRgb(this.h*360, 0.9*100, 0.95*100);
-        
+            return hsvToRgb(this.h*360, 0.9*100, 0.95*100);
+        }
+
+        static generateColor32bitEncoded(): number {
+            var col = this.generateColor;
+            return col[0] << 16 | col[1] << 8 | col[2];
         }
 
 
