@@ -116,33 +116,23 @@ var Blindfire;
             _super.apply(this, arguments);
             this.i = 0;
         }
-        //renderer: MemoryRenderer;
         Level.prototype.create = function () {
             var game = this.game;
             this.logo = this.game.add.sprite(10, 10, 'logo');
             this.background = this.game.make.sprite(0, 0, 'cat_eyes');
             var block = this.game.make.sprite(0, 0, 'block');
-            this.group = this.game.add.group(block);
-            this.group.add(this.background);
-            this.group.add(block);
-            this.mask = new Phaser.Graphics(this.game, 0, 0);
-            this.mask.beginFill(0xffffff);
-            this.mask.drawRect(-100, -100, 5, 100);
-            this.mask.endFill();
-            this.game.add.existing(block);
-            this.group.mask = this.mask;
-            // var bmd = game.make.bitmapData(game.width, game.height);
-            // bmd.draw(this.group);
-            //bmd.addToWorld();
-            // bmd.fill(0, 0, 0, 0.5);
-            //game.add.image(game.world.centerX, 220, bmd);
-            //this.renderer = new MemoryRenderer(game);
+            var block2 = this.game.make.sprite(50, 30, 'block');
+            this.renderer = new Blindfire.MemoryRenderer(game);
+            this.renderer.add(this.background);
+            this.renderer.add(block);
+            this.renderer.add(block2);
+            // this.renderer.add(this.background);
         };
         Level.prototype.update = function () {
-            //this.renderer.update();
+            this.renderer.update();
         };
         Level.prototype.render = function () {
-            //this.renderer.render();
+            this.renderer.render();
         };
         return Level;
     })(Phaser.State);
@@ -231,36 +221,42 @@ var Blindfire;
 (function (Blindfire) {
     var MemoryRenderer = (function () {
         function MemoryRenderer(game) {
+            this.drawObjects = [];
+            this.frame = 0;
             this.game = game;
             this.init(game);
         }
         MemoryRenderer.prototype.init = function (game) {
             this.gameGroup = this.game.make.group(null);
-            var watchWindowBitmap = game.add.bitmapData(game.width, game.height);
+            var watchWindowBitmap = game.make.bitmapData(game.width, game.height);
+            this.gameBmd = game.make.bitmapData(game.width, game.height);
+            this.watchWindowBitmap = watchWindowBitmap;
+            this.watchWindowBitmap.fill(1, 1, 0, 0);
+            var mask = game.add.bitmapData(1, 1);
+            this.mask = mask;
+            this.mask.fill(0, 0, 0, 1);
+            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
             var bmd = game.add.bitmapData(game.width, game.height);
             bmd.fill(1, 1, 1, 1);
             bmd.addToWorld();
             this.bmd = bmd;
-            this.watchWindowBitmap = watchWindowBitmap;
-            this.watchWindowBitmap.addToWorld();
-            //this.watchWindowBitmap.fill(1, 1, 0, 0);
-            var mask = game.add.bitmapData(1, 1);
-            this.mask = mask;
-            this.mask.fill(1, 0, 0, 1);
-            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
-            //this.watchWindowBitmap.alphaMask(this.background, this.mask, null, this.maskRect);
         };
         MemoryRenderer.prototype.add = function (e) {
-            this.gameGroup.add(e);
+            this.drawObjects.push(e);
+            this.drawObjects.sort(function (a, b) { return a.z - b.z; });
         };
         MemoryRenderer.prototype.update = function () {
+            var _this = this;
             var game = this.game;
-            var t = this.gameGroup.generateTexture(null, null, game.renderer);
-            var s = new Phaser.Sprite(game, 0, 0, t);
             this.frame++;
             this.maskRect.centerOn(this.game.input.x, this.game.input.y);
-            // this.watchWindowBitmap.alphaMask(image, this.mask, null, this.maskRect);
-            this.watchWindowBitmap.draw(s);
+            this.gameBmd.clear();
+            //this.watchWindowBitmap.clear();
+            this.drawObjects.forEach(function (val) {
+                _this.gameBmd.blendAdd();
+                _this.gameBmd.draw(val, val.x, val.y);
+            });
+            this.watchWindowBitmap = this.watchWindowBitmap.alphaMask(this.gameBmd, this.mask, null, this.maskRect);
             if (this.frame % 6 == 0) {
                 this.bmd.blendSaturation();
                 this.bmd.fill(0, 0, 0, 0.030);
