@@ -5,6 +5,51 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var Blindfire;
+(function (_Blindfire) {
+    var Blindfire = (function (_super) {
+        __extends(Blindfire, _super);
+        function Blindfire() {
+            _super.call(this, 800, 600, Phaser.AUTO, 'content', null);
+            this.state.add('Boot', _Blindfire.Boot, false);
+            this.state.add('Preloader', _Blindfire.Preloader, false);
+            this.state.add('MainMenu', _Blindfire.MainMenu, false);
+            // this.state.add('Level1', Level1, false);
+            this.state.add('Level', _Blindfire.Level, false);
+            this.state.start('Boot');
+        }
+        return Blindfire;
+    })(Phaser.Game);
+    window.onload = function () {
+        var game = new Blindfire();
+    };
+})(Blindfire || (Blindfire = {}));
+var Blindfire;
+(function (Blindfire) {
+    var Level = (function (_super) {
+        __extends(Level, _super);
+        function Level() {
+            _super.apply(this, arguments);
+        }
+        Level.prototype.create = function () {
+            this.background = this.game.add.sprite(0, 0, 'cat_eyes');
+            var screenView = this.game.add.graphics(0, 0);
+            screenView.beginFill();
+            //screenView.lineStyle(2, 0xff0000, 1);
+            screenView.drawRect(-100, -100, 200, 200);
+            screenView.endFill();
+            this.screenMask = screenView;
+            this.background.mask = screenView;
+        };
+        Level.prototype.update = function () {
+            this.screenMask.position.copyFrom(this.game.input.mousePointer.position);
+        };
+        Level.prototype.render = function () {
+        };
+        return Level;
+    })(Phaser.State);
+    Blindfire.Level = Level;
+})(Blindfire || (Blindfire = {}));
+var Blindfire;
 (function (Blindfire) {
     var Boot = (function (_super) {
         __extends(Boot, _super);
@@ -24,24 +69,6 @@ var Blindfire;
         return Boot;
     })(Phaser.State);
     Blindfire.Boot = Boot;
-})(Blindfire || (Blindfire = {}));
-var Blindfire;
-(function (_Blindfire) {
-    var Blindfire = (function (_super) {
-        __extends(Blindfire, _super);
-        function Blindfire() {
-            _super.call(this, 800, 600, Phaser.AUTO, 'content', null);
-            this.state.add('Boot', _Blindfire.Boot, false);
-            this.state.add('Preloader', _Blindfire.Preloader, false);
-            this.state.add('MainMenu', _Blindfire.MainMenu, false);
-            // this.state.add('Level1', Level1, false);
-            this.state.start('Boot');
-        }
-        return Blindfire;
-    })(Phaser.Game);
-    window.onload = function () {
-        var game = new Blindfire();
-    };
 })(Blindfire || (Blindfire = {}));
 var Blindfire;
 (function (Blindfire) {
@@ -83,18 +110,18 @@ var Blindfire;
             this.preloadBar = this.add.sprite(200, 250, 'preloadBar');
             this.load.setPreloadSprite(this.preloadBar);
             //  Load our actual games assets
-            this.load.image('titlepage', 'assets/titlepage.jpg');
             this.load.image('logo', 'assets/logo.png');
             this.load.audio('music', 'assets/title.mp3', true);
-            this.load.spritesheet('simon', 'assets/simon.png', 58, 96, 5);
-            this.load.image('level1', 'assets/level1.png');
+            this.load.image('cat_eyes', 'assets/cat_eyes.jpg');
         };
         Preloader.prototype.create = function () {
-            var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
-            tween.onComplete.add(this.startMainMenu, this);
+            //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+            // tween.onComplete.add(this.startMainMenu, this);
+            this.startMainMenu();
         };
         Preloader.prototype.startMainMenu = function () {
-            this.game.state.start('MainMenu', true, false);
+            // this.game.state.start('MainMenu', true, false);
+            this.game.state.start('Level', true, false);
         };
         return Preloader;
     })(Phaser.State);
