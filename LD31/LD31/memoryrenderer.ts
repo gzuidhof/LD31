@@ -18,9 +18,10 @@
 
         frame: number = 0;
 
-        constructor(game: Phaser.Game) {
+        constructor(game: Phaser.Game, screenRect: Phaser.Rectangle) {
             this.game = game;
             this.init(game);
+            this.maskRect = screenRect;
         }
 
         init(game: Phaser.Game) {
@@ -40,7 +41,7 @@
             this.mask = mask;
             
             this.mask.fill(0, 0, 0, 1);
-            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
+            
 
             
             var bmd = game.add.bitmapData(game.width, game.height);
@@ -61,7 +62,7 @@
 
 
             this.frame++;
-            this.maskRect.centerOn(this.game.input.x, this.game.input.y);
+            
 
 
             this.gameBmd.clear();

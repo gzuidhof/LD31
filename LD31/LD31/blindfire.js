@@ -110,29 +110,63 @@ var Blindfire;
 })(Blindfire || (Blindfire = {}));
 var Blindfire;
 (function (Blindfire) {
+    var Guidable = (function () {
+        function Guidable() {
+        }
+        return Guidable;
+    })();
+    Blindfire.Guidable = Guidable;
+})(Blindfire || (Blindfire = {}));
+var Blindfire;
+(function (Blindfire) {
     var Level = (function (_super) {
         __extends(Level, _super);
         function Level() {
             _super.apply(this, arguments);
             this.i = 0;
+            this.maxSpeed = 10;
+            this.velocity = new Phaser.Point(0, 0);
+            this.snapiness = 0.01;
         }
         Level.prototype.create = function () {
             var game = this.game;
+            game.physics.startSystem(Phaser.Physics.ARCADE);
             this.logo = this.game.add.sprite(10, 10, 'logo');
             this.background = this.game.make.sprite(0, 0, 'cat_eyes');
             var block = this.game.make.sprite(0, 0, 'block');
             var block2 = this.game.make.sprite(50, 30, 'block');
-            this.renderer = new Blindfire.MemoryRenderer(game);
+            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
+            this.renderer = new Blindfire.MemoryRenderer(game, this.maskRect);
             this.renderer.add(this.background);
             this.renderer.add(block);
             this.renderer.add(block2);
             // this.renderer.add(this.background);
         };
         Level.prototype.update = function () {
+            var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
+            var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
+            var desiredVel = mousePos.subtract(curPos.x, curPos.y);
+            if (desiredVel.getMagnitude() > this.maxSpeed) {
+                desiredVel.normalize().setMagnitude(this.maxSpeed);
+            }
+            this.velocity = this.interpPoints(this.velocity, desiredVel, this.game.time.elapsed * this.snapiness);
+            // console.log(curPos);
+            // console.log(mousePos);
+            //console.log(desiredVel);
+            //console.log(desiredVel.getMagnitude());
+            this.maskRect.centerOn(curPos.x + this.velocity.x, (curPos.y + this.velocity.y));
+            //            this.maskRect.centerX = (curPos.y + this.velocity.y);
             this.renderer.update();
         };
         Level.prototype.render = function () {
             this.renderer.render();
+        };
+        Level.prototype.interpPoints = function (a, b, t) {
+            return a.setTo(this.interp(a.x, b.x, t), this.interp(a.y, b.y, t));
+        };
+        Level.prototype.interp = function (a, b, t) {
+            t = Math.max(0, Math.min(t, 1));
+            return a + t * (b - a);
         };
         return Level;
     })(Phaser.State);
@@ -220,11 +254,12 @@ var Blindfire;
 var Blindfire;
 (function (Blindfire) {
     var MemoryRenderer = (function () {
-        function MemoryRenderer(game) {
+        function MemoryRenderer(game, screenRect) {
             this.drawObjects = [];
             this.frame = 0;
             this.game = game;
             this.init(game);
+            this.maskRect = screenRect;
         }
         MemoryRenderer.prototype.init = function (game) {
             this.gameGroup = this.game.make.group(null);
@@ -235,7 +270,6 @@ var Blindfire;
             var mask = game.add.bitmapData(1, 1);
             this.mask = mask;
             this.mask.fill(0, 0, 0, 1);
-            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
             var bmd = game.add.bitmapData(game.width, game.height);
             bmd.fill(1, 1, 1, 1);
             bmd.addToWorld();
@@ -249,7 +283,6 @@ var Blindfire;
             var _this = this;
             var game = this.game;
             this.frame++;
-            this.maskRect.centerOn(this.game.input.x, this.game.input.y);
             this.gameBmd.clear();
             //this.watchWindowBitmap.clear();
             this.drawObjects.forEach(function (val) {
