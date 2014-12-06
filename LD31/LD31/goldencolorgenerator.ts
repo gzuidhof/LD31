@@ -8,7 +8,7 @@
         static generateColor() {
             this.h = this.golden_ratio_conjugate;
             this.h %= 1;
-            hsvToRgb(this.h, 0.9, 0.95);
+            hsvToRgb(this.h*360, 0.9*100, 0.95*100);
         
         }
 

@@ -32,7 +32,7 @@ var Blindfire;
         GoldenColorGenerator.generateColor = function () {
             this.h = this.golden_ratio_conjugate;
             this.h %= 1;
-            hsvToRgb(this.h, 0.9, 0.95);
+            hsvToRgb(this.h * 360, 0.9 * 100, 0.95 * 100);
         };
         //Generate (next) random color given golden ratio conjugate
         GoldenColorGenerator.golden_ratio_conjugate = 0.618033988749895;
