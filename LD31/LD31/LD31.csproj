@@ -22,7 +22,6 @@
     <Content Include="index.html" />
     <Content Include="assets\loader.png" />
     <Content Include="assets\logo.png" />
-    <Content Include="phaser.js" />
     <Content Include="assets\title.mp3" />
     <Content Include="web.config" />
   </ItemGroup>
@@ -35,6 +34,7 @@
     <TypeScriptCompile Include="level.ts" />
     <TypeScriptCompile Include="loading\menu.ts" />
     <TypeScriptCompile Include="loading\preloader.ts" />
+    <TypeScriptCompile Include="mainlevel.ts" />
     <TypeScriptCompile Include="memoryrenderer.ts" />
     <TypeScriptCompile Include="runway.ts" />
     <TypeScriptCompile Include="typings\phaser.d.ts" />

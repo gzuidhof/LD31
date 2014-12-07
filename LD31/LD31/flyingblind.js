@@ -15,7 +15,7 @@ var FlyingBlind;
             this.state.add('Preloader', _FlyingBlind.Preloader, false);
             this.state.add('MainMenu', _FlyingBlind.MainMenu, false);
             // this.state.add('Level1', Level1, false);
-            this.state.add('Level', _FlyingBlind.Level, false);
+            this.state.add('MainLevel', _FlyingBlind.MainLevel, false);
             console.log("go");
             this.state.start('Boot');
         }
@@ -160,19 +160,19 @@ var FlyingBlind;
                 var vel = this.navNodes[0].clone().subtract(this.position.x, this.position.y);
                 this.velocity = vel;
             }
-            if (this.x + this.hitboxRadius > this.game.width) {
+            if (this.x + this.hitboxRadius * 0.6 > this.game.width) {
                 this.navNodes = [];
                 this.velocity.x = -Math.abs(this.velocity.y);
             }
-            else if (this.x - this.hitboxRadius < 0) {
+            else if (this.x - this.hitboxRadius * 0.6 < 0) {
                 this.navNodes = [];
                 this.velocity.x = Math.abs(this.velocity.x);
             }
-            if (this.y + this.hitboxRadius > this.game.height) {
+            if (this.y + this.hitboxRadius * 0.6 > this.game.height) {
                 this.navNodes = [];
                 this.velocity.y = -Math.abs(this.velocity.y);
             }
-            else if (this.y - this.hitboxRadius < 0) {
+            else if (this.y - this.hitboxRadius * 0.6 < 0) {
                 this.navNodes = [];
                 this.velocity.y = Math.abs(this.velocity.y);
             }
@@ -189,12 +189,14 @@ var FlyingBlind;
 })(FlyingBlind || (FlyingBlind = {}));
 var FlyingBlind;
 (function (FlyingBlind) {
-    var Level = (function (_super) {
-        __extends(Level, _super);
-        function Level() {
+    var GameLevel = (function (_super) {
+        __extends(GameLevel, _super);
+        function GameLevel() {
             var _this = this;
             _super.apply(this, arguments);
             this.gameObjects = [];
+            this.guidables = [];
+            this.runways = [];
             this.handleMouseDown = function () {
                 _this.gameObjects.forEach(function (val) {
                     if (val.hitboxRadius && val.onMouseClick) {
@@ -211,37 +213,47 @@ var FlyingBlind;
                     }
                 });
             };
-            this.i = 0;
             this.maxSpeed = 10;
             this.velocity = new Phaser.Point(0, 0);
             this.snapiness = 0.008;
         }
-        Level.prototype.addToGame = function (e) {
+        GameLevel.prototype.addToGame = function (e) {
             this.gameObjects.push(e);
             this.gameObjects.sort(function (a, b) { return a.z - b.z; });
         };
-        Level.prototype.create = function () {
-            this.gameObjects = [];
+        GameLevel.prototype.addGuidable = function (x, y, asset, color) {
+            var sprite = new FlyingBlind.Guidable(this.game, x, y, asset, color);
+            this.addToGame(sprite);
+            this.guidables.push(sprite);
+        };
+        GameLevel.prototype.addRunway = function (x, y, dx, dy, type, color) {
+            var sprite = new FlyingBlind.Runway(this.game, x, y, dx, dy);
+            this.addToGame(sprite);
+            this.runways.push(sprite);
+        };
+        GameLevel.prototype.checkForLandings = function () {
+            var _this = this;
+            this.guidables.forEach(function (plane) {
+                _this.runways.forEach(function (runway) {
+                    if (runway.checkLanded(plane)) {
+                        console.log("LANDED!");
+                    }
+                });
+            });
+        };
+        GameLevel.prototype.create = function () {
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.background = this.game.make.sprite(0, 0, 'background');
-            this.addToGame(this.background);
-            var runway = this.game.make.sprite(0, 0, 'runway');
-            var col = runway.tint = FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded();
-            this.addToGame(runway);
             this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
             this.renderer = new FlyingBlind.MemoryRenderer(game, this.maskRect);
             this.renderer.drawAllNoMask(this.gameObjects);
-            // this.renderer.add(this.background);
-            var color = FlyingBlind.GoldenColorGenerator.generateColor();
-            this.addToGame(new FlyingBlind.Guidable(this.game, 50, 50, 'ship2', this.RGBtoHEX(color[0], color[1], color[2])));
             //this.game.input.ad
             this.game.input.onDown.add(this.handleMouseDown);
             this.game.input.onUp.add(this.handleMouseUp);
             this.windowSprite = this.game.add.sprite(0, 0, 'window');
             this.windowSprite.anchor.set(0.5, 0.5);
         };
-        Level.prototype.update = function () {
+        GameLevel.prototype.update = function () {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
             var desiredVel = mousePos.subtract(curPos.x, curPos.y).multiply(0.2, 0.2);
@@ -251,27 +263,25 @@ var FlyingBlind;
             this.velocity = this.interpPoints(this.velocity, desiredVel, this.game.time.elapsed * this.snapiness);
             this.maskRect.centerOn(curPos.x + this.velocity.x, (curPos.y + this.velocity.y));
             this.windowSprite.position.set(this.maskRect.centerX, this.maskRect.centerY);
-            this.renderer.update(this.gameObjects);
+            this.checkForLandings();
             for (var i = 0; i < this.gameObjects.length; i++) {
                 this.gameObjects[i].update();
             }
+            this.renderer.update(this.gameObjects);
         };
-        Level.prototype.render = function () {
+        GameLevel.prototype.render = function () {
             this.renderer.render();
         };
-        Level.prototype.RGBtoHEX = function (r, g, b) {
-            return r << 16 | g << 8 | b;
-        };
-        Level.prototype.interpPoints = function (a, b, t) {
+        GameLevel.prototype.interpPoints = function (a, b, t) {
             return a.setTo(this.interp(a.x, b.x, t), this.interp(a.y, b.y, t));
         };
-        Level.prototype.interp = function (a, b, t) {
+        GameLevel.prototype.interp = function (a, b, t) {
             t = Math.max(0, Math.min(t, 1));
             return a + t * (b - a);
         };
-        return Level;
+        return GameLevel;
     })(Phaser.State);
-    FlyingBlind.Level = Level;
+    FlyingBlind.GameLevel = GameLevel;
 })(FlyingBlind || (FlyingBlind = {}));
 var FlyingBlind;
 (function (FlyingBlind) {
@@ -350,11 +360,30 @@ var FlyingBlind;
         };
         Preloader.prototype.startMainMenu = function () {
             // this.game.state.start('MainMenu', true, false);
-            this.game.state.start('Level', true, false);
+            this.game.state.start('MainLevel', true, false);
         };
         return Preloader;
     })(Phaser.State);
     FlyingBlind.Preloader = Preloader;
+})(FlyingBlind || (FlyingBlind = {}));
+var FlyingBlind;
+(function (FlyingBlind) {
+    var MainLevel = (function (_super) {
+        __extends(MainLevel, _super);
+        function MainLevel() {
+            _super.apply(this, arguments);
+        }
+        MainLevel.prototype.create = function () {
+            this.background = this.game.make.sprite(0, 0, 'background');
+            this.addToGame(this.background);
+            this.addRunway(100, 100, 1, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
+            _super.prototype.create.call(this);
+            this.addGuidable(50, 50, 'ship2', 0xffffff);
+            this.addGuidable(100, 50, 'ship2', 0xffffff);
+        };
+        return MainLevel;
+    })(FlyingBlind.GameLevel);
+    FlyingBlind.MainLevel = MainLevel;
 })(FlyingBlind || (FlyingBlind = {}));
 var FlyingBlind;
 (function (FlyingBlind) {
@@ -453,9 +482,18 @@ var FlyingBlind;
 (function (FlyingBlind) {
     var Runway = (function (_super) {
         __extends(Runway, _super);
-        function Runway() {
-            _super.apply(this, arguments);
+        function Runway(game, x, y, dx, dy) {
+            _super.call(this, game, x, y, 'landicon');
+            this.direction = new Phaser.Point(dx, dy);
+            this.anchor.set(0.5, 0.5);
         }
+        Runway.prototype.checkLanded = function (plane) {
+            if (this.position.distance(plane.position) < 18.5) {
+                //console.log(plane.velocity.angle(this.direction, true));
+                return Math.abs(plane.velocity.angle(this.direction, true)) > 75;
+            }
+            return false;
+        };
         return Runway;
     })(Phaser.Sprite);
     FlyingBlind.Runway = Runway;

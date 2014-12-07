@@ -68,20 +68,20 @@
 
             
 
-            if (this.x + this.hitboxRadius > this.game.width) {
+            if (this.x + this.hitboxRadius * 0.6 > this.game.width) {
                 this.navNodes = [];
                 this.velocity.x = -Math.abs(this.velocity.y);
             }
-            else if (this.x - this.hitboxRadius < 0 ) {
+            else if (this.x - this.hitboxRadius * 0.6 < 0 ) {
                 this.navNodes = [];
                 this.velocity.x = Math.abs(this.velocity.x);
             }
 
-            if (this.y + this.hitboxRadius> this.game.height) {
+            if (this.y + this.hitboxRadius * 0.6> this.game.height) {
                 this.navNodes = [];
                 this.velocity.y = -Math.abs(this.velocity.y);
             }
-            else if (this.y - this.hitboxRadius< 0) {
+            else if (this.y - this.hitboxRadius*0.6< 0) {
                 this.navNodes = [];
                 this.velocity.y = Math.abs(this.velocity.y);
             }

@@ -10,7 +10,7 @@
             this.state.add('Preloader', Preloader, false);
             this.state.add('MainMenu', MainMenu, false);
             // this.state.add('Level1', Level1, false);
-            this.state.add('Level', Level, false);
+            this.state.add('MainLevel', MainLevel, false);
 
             console.log("go");
             this.state.start('Boot');

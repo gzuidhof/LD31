@@ -1,5 +1,5 @@
 ﻿module FlyingBlind {
-    export class Level extends Phaser.State {
+    export class GameLevel extends Phaser.State {
 
         background: Phaser.Sprite;
         windowSprite: Phaser.Sprite;
@@ -7,6 +7,8 @@
         renderer: MemoryRenderer;
 
         gameObjects: Phaser.Sprite[] = [];
+        guidables: Guidable[] = [];
+        runways: Runway[] = [];
 
         maskRect: Phaser.Rectangle;
 
@@ -15,35 +17,43 @@
             this.gameObjects.sort((a, b) => a.z - b.z);
         }
 
-        
+        addGuidable(x, y, asset, color: number) {
+            var sprite = new Guidable(this.game, x, y, asset, color);
+            this.addToGame(sprite);
+            this.guidables.push(sprite);
+        }
+
+        addRunway(x, y, dx, dy, type, color) {
+            var sprite = new Runway(this.game, x, y, dx, dy);
+            this.addToGame(sprite);
+            this.runways.push(sprite);
+        }
+
+        checkForLandings() {
+            this.guidables.forEach((plane) => {
+
+                this.runways.forEach((runway) => {
+                    if (runway.checkLanded(plane)) {
+                        console.log("LANDED!");
+                    }
+
+                });
+
+            });
+
+        }
+
+
 
 
         create() {
-            this.gameObjects = [];
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
-
-            
-            this.background = this.game.make.sprite(0, 0, 'background');
-            this.addToGame(this.background);
-
-            var runway = this.game.make.sprite(0, 0, 'runway');
-            var col = 
-            runway.tint = GoldenColorGenerator.generateColor32bitEncoded();
-            this.addToGame(runway);
-
             this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
-
             this.renderer = new MemoryRenderer(game, this.maskRect);
             
 
             this.renderer.drawAllNoMask(this.gameObjects);
-
-
-           // this.renderer.add(this.background);
-            var color = GoldenColorGenerator.generateColor();
-            
-            this.addToGame(new Guidable(this.game, 50, 50, 'ship2', this.RGBtoHEX(color[0], color[1], color[2])));
 
             //this.game.input.ad
             this.game.input.onDown.add(this.handleMouseDown);
@@ -51,8 +61,6 @@
 
             this.windowSprite = this.game.add.sprite(0, 0, 'window');
             this.windowSprite.anchor.set(0.5, 0.5);
-
-            
 
         }
 
@@ -75,11 +83,6 @@
             });
         }
 
-        
-
-
-
-        i = 0;
         maxSpeed = 10;
         velocity: Phaser.Point = new Phaser.Point(0,0);
         snapiness: number = 0.008;
@@ -100,27 +103,22 @@
             this.maskRect.centerOn (curPos.x + this.velocity.x, (curPos.y + this.velocity.y)) ;
             this.windowSprite.position.set(this.maskRect.centerX, this.maskRect.centerY);
 
-
-            this.renderer.update(this.gameObjects);
+            this.checkForLandings();
 
             for (var i = 0; i < this.gameObjects.length; i++) {
                 this.gameObjects[i].update();
             }
 
+            this.renderer.update(this.gameObjects);
+
+            
+
+            
+
         }
 
         render() {
-
-            
-
-            
             this.renderer.render();
-        }
-
-        RGBtoHEX(r, g, b) {
-
-            return r << 16 | g << 8 | b;
-
         }
 
         interpPoints(a: Phaser.Point, b: Phaser.Point, t) {
