@@ -1,4 +1,4 @@
-﻿module Blindfire {
+﻿module FlyingBlind {
 
     export class Preloader extends Phaser.State {
 

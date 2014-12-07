@@ -31,11 +31,12 @@
     <TypeScriptCompile Include="goldencolorgenerator.ts" />
     <TypeScriptCompile Include="guidable.ts" />
     <TypeScriptCompile Include="loading\boot.ts" />
-    <TypeScriptCompile Include="blindfire.ts" />
+    <TypeScriptCompile Include="flyingblind.ts" />
     <TypeScriptCompile Include="level.ts" />
     <TypeScriptCompile Include="loading\menu.ts" />
     <TypeScriptCompile Include="loading\preloader.ts" />
     <TypeScriptCompile Include="memoryrenderer.ts" />
+    <TypeScriptCompile Include="runway.ts" />
     <TypeScriptCompile Include="typings\phaser.d.ts" />
     <TypeScriptCompile Include="typings\pixi.d.ts" />
   </ItemGroup>
@@ -76,7 +77,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
-    <TypeScriptOutFile>blindfire.js</TypeScriptOutFile>
+    <TypeScriptOutFile>flyingblind.js</TypeScriptOutFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptRemoveComments>true</TypeScriptRemoveComments>

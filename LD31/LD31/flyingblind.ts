@@ -1,6 +1,6 @@
-﻿module Blindfire {
+﻿module FlyingBlind {
 
-    class Blindfire extends Phaser.Game {
+    class FlyingBlind extends Phaser.Game {
 
         constructor() {
             super(1024, 720, Phaser.AUTO, 'content', null, true);
@@ -18,6 +18,6 @@
     }
 
     window.onload = () => {
-        var game = new Blindfire();
+        var game = new FlyingBlind();
     };
 }

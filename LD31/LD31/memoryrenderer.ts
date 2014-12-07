@@ -1,4 +1,4 @@
-﻿module Blindfire {
+﻿module FlyingBlind {
     export class MemoryRenderer {
 
         game: Phaser.Game;
@@ -75,16 +75,14 @@
           //  if (this.frame % 1 == 0) {
                 this.bmd.blendSaturation();
                 this.bmd.fill(0, 0, 0, 0.03);
-                this.bmd.blendReset();
            // }
-            if (this.frame % 20 == 0) {
-                this.bmd.blendOverlay();
-                this.bmd.fill(0.1, 0.1, 0.1, 0.003);
+            //if (this.frame % 20 == 0) {
+            //    this.bmd.blendOverlay();
+            //    this.bmd.fill(0.1, 0.1, 0.1, 0.003);
+            //
 
-                this.bmd.blendReset();
-
-            }
-
+            //}
+            this.bmd.blendReset();
             this.bmd.draw(this.watchWindowBitmap);
         }
 

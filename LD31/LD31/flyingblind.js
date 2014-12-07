@@ -1,29 +1,3 @@
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var FlyingBlind;
-(function (_FlyingBlind) {
-    var FlyingBlind = (function (_super) {
-        __extends(FlyingBlind, _super);
-        function FlyingBlind() {
-            _super.call(this, 1024, 720, Phaser.AUTO, 'content', null, true);
-            this.renderer = new PIXI.WebGLRenderer(1024, 700, { transparent: true, clearBeforeRender: false });
-            this.state.add('Boot', _FlyingBlind.Boot, false);
-            this.state.add('Preloader', _FlyingBlind.Preloader, false);
-            this.state.add('MainMenu', _FlyingBlind.MainMenu, false);
-            // this.state.add('Level1', Level1, false);
-            this.state.add('Level', _FlyingBlind.Level, false);
-            this.state.start('Boot');
-        }
-        return FlyingBlind;
-    })(Phaser.Game);
-    window.onload = function () {
-        var game = new FlyingBlind();
-    };
-})(FlyingBlind || (FlyingBlind = {}));
 var FlyingBlind;
 (function (FlyingBlind) {
     var GoldenColorGenerator = (function () {
@@ -112,6 +86,12 @@ var FlyingBlind;
         return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     }
 })(FlyingBlind || (FlyingBlind = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var FlyingBlind;
 (function (FlyingBlind) {
     var Guidable = (function (_super) {
@@ -388,13 +368,13 @@ var FlyingBlind;
             //  if (this.frame % 1 == 0) {
             this.bmd.blendSaturation();
             this.bmd.fill(0, 0, 0, 0.03);
-            this.bmd.blendReset();
             // }
-            if (this.frame % 20 == 0) {
-                this.bmd.blendOverlay();
-                this.bmd.fill(0.1, 0.1, 0.1, 0.003);
-                this.bmd.blendReset();
-            }
+            //if (this.frame % 20 == 0) {
+            //    this.bmd.blendOverlay();
+            //    this.bmd.fill(0.1, 0.1, 0.1, 0.003);
+            //
+            //}
+            this.bmd.blendReset();
             this.bmd.draw(this.watchWindowBitmap);
         };
         MemoryRenderer.prototype.drawAllNoMask = function (drawList) {
@@ -450,4 +430,4 @@ var FlyingBlind;
     })(Phaser.Sprite);
     FlyingBlind.Runway = Runway;
 })(FlyingBlind || (FlyingBlind = {}));
-//# sourceMappingURL=blindfire.js.map
+//# sourceMappingURL=flyingblind.js.map

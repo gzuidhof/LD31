@@ -1,4 +1,4 @@
-﻿module Blindfire {
+﻿module FlyingBlind {
     export class Level extends Phaser.State {
 
         background: Phaser.Sprite;

@@ -1,4 +1,4 @@
-﻿module Blindfire {
+﻿module FlyingBlind {
     export class Guidable extends Phaser.Sprite implements Clickable{
 
         navNodes: Phaser.Point[];
