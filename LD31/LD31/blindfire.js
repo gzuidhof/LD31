@@ -9,8 +9,8 @@ var Blindfire;
     var Blindfire = (function (_super) {
         __extends(Blindfire, _super);
         function Blindfire() {
-            _super.call(this, 800, 600, Phaser.AUTO, 'content', null, true);
-            this.renderer = new PIXI.WebGLRenderer(800, 600, { transparent: true, clearBeforeRender: false });
+            _super.call(this, 1024, 720, Phaser.AUTO, 'content', null, true);
+            this.renderer = new PIXI.WebGLRenderer(1024, 700, { transparent: true, clearBeforeRender: false });
             this.state.add('Boot', _Blindfire.Boot, false);
             this.state.add('Preloader', _Blindfire.Preloader, false);
             this.state.add('MainMenu', _Blindfire.MainMenu, false);
@@ -32,7 +32,7 @@ var Blindfire;
         GoldenColorGenerator.generateColor = function () {
             this.h += this.golden_ratio_conjugate;
             this.h %= 1;
-            return hsvToRgb(this.h * 360, 0.9 * 100, 0.95 * 100);
+            return hsvToRgb(this.h * 360, 100, 0.95 * 100);
         };
         GoldenColorGenerator.generateColor32bitEncoded = function () {
             var col = this.generateColor;
@@ -40,7 +40,7 @@ var Blindfire;
         };
         //Generate (next) random color given golden ratio conjugate
         GoldenColorGenerator.golden_ratio_conjugate = 0.618033988749895;
-        GoldenColorGenerator.h = 0.5;
+        GoldenColorGenerator.h = 0.3;
         return GoldenColorGenerator;
     })();
     Blindfire.GoldenColorGenerator = GoldenColorGenerator;
@@ -117,10 +117,44 @@ var Blindfire;
     var Guidable = (function (_super) {
         __extends(Guidable, _super);
         function Guidable(game, x, y, key, color) {
+            var _this = this;
             _super.call(this, game, x, y, key);
+            this.hitboxRadius = 20;
+            this.speed = 1;
+            this.drawing = false;
+            this.velocity = new Phaser.Point(0, 0);
+            this.onMouseClick = function (guidable, pointer) {
+                console.log("click!");
+                _this.drawing = true;
+                _this.navNodes = [];
+            };
+            this.onMouseRelease = function () {
+                console.log("release");
+                _this.drawing = false;
+            };
+            this.color = color;
             this.tint = color;
+            this.anchor.setTo(0.5, 0.5);
+            this.scale.set(0.75, 0.75);
+            this.game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.navNodes = [];
         }
         Guidable.prototype.update = function () {
+            if (this.drawing) {
+                this.navNodes.push(this.game.input.activePointer.position.clone());
+            }
+            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 15) {
+                this.navNodes.shift();
+            }
+            if (this.navNodes.length == 0) {
+            }
+            else {
+                this.rotation = this.game.physics.arcade.moveToXY(this, this.navNodes[0].x, this.navNodes[0].y, this.speed * 300, 10);
+                var vel = this.navNodes[0].clone().subtract(this.position.x, this.position.y);
+                vel.setMagnitude(this.speed);
+                this.velocity = vel;
+            }
+            this.position = this.position.add(this.velocity.x, this.velocity.y);
         };
         return Guidable;
     })(Phaser.Sprite);
@@ -131,40 +165,69 @@ var Blindfire;
     var Level = (function (_super) {
         __extends(Level, _super);
         function Level() {
+            var _this = this;
             _super.apply(this, arguments);
+            this.gameObjects = [];
+            this.handleMouseDown = function () {
+                _this.gameObjects.forEach(function (val) {
+                    if (val.hitboxRadius && val.onMouseClick) {
+                        if (_this.game.input.mousePointer.position.distance(val.position) < val.hitboxRadius) {
+                            val.onMouseClick();
+                        }
+                    }
+                });
+            };
+            this.handleMouseUp = function () {
+                _this.gameObjects.forEach(function (val) {
+                    if (val.onMouseRelease) {
+                        val.onMouseRelease();
+                    }
+                });
+            };
             this.i = 0;
             this.maxSpeed = 10;
             this.velocity = new Phaser.Point(0, 0);
-            this.snapiness = 0.004;
+            this.snapiness = 0.008;
         }
+        Level.prototype.addToGame = function (e) {
+            this.gameObjects.push(e);
+            this.gameObjects.sort(function (a, b) { return a.z - b.z; });
+        };
         Level.prototype.create = function () {
+            this.gameObjects = [];
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.logo = this.game.add.sprite(10, 10, 'logo');
             this.background = this.game.make.sprite(0, 0, 'cat_eyes');
-            var block = this.game.make.sprite(0, 0, 'block');
-            var block2 = this.game.make.sprite(50, 30, 'block');
-            this.maskRect = new Phaser.Rectangle(0, 0, 100, 100);
+            this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
             this.renderer = new Blindfire.MemoryRenderer(game, this.maskRect);
-            this.renderer.add(this.background);
-            this.renderer.add(block);
-            this.renderer.add(block2);
+            this.addToGame(this.background);
+            this.renderer.drawAllNoMask(this.gameObjects);
             // this.renderer.add(this.background);
+            var color = Blindfire.GoldenColorGenerator.generateColor();
+            this.addToGame(new Blindfire.Guidable(this.game, 50, 50, 'ship2', this.RGBtoHEX(color[0], color[1], color[2])));
+            //this.game.input.ad
+            this.game.input.onDown.add(this.handleMouseDown);
+            this.game.input.onUp.add(this.handleMouseUp);
+            this.windowSprite = this.game.add.sprite(0, 0, 'window');
+            this.windowSprite.anchor.set(0.5, 0.5);
         };
         Level.prototype.update = function () {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
-            var desiredVel = mousePos.subtract(curPos.x, curPos.y);
+            var desiredVel = mousePos.subtract(curPos.x, curPos.y).multiply(0.2, 0.2);
             if (desiredVel.getMagnitude() > this.maxSpeed) {
                 desiredVel.normalize().setMagnitude(this.maxSpeed);
             }
             this.velocity = this.interpPoints(this.velocity, desiredVel, this.game.time.elapsed * this.snapiness);
             this.maskRect.centerOn(curPos.x + this.velocity.x, (curPos.y + this.velocity.y));
-            this.renderer.update();
+            this.windowSprite.position.set(this.maskRect.centerX, this.maskRect.centerY);
+            this.renderer.update(this.gameObjects);
+            for (var i = 0; i < this.gameObjects.length; i++) {
+                this.gameObjects[i].update();
+            }
         };
         Level.prototype.render = function () {
-            var color = Blindfire.GoldenColorGenerator.generateColor();
-            this.renderer.add(new Blindfire.Guidable(this.game, this.game.world.randomX, this.game.world.randomY, 'block', this.RGBtoHEX(color[0], color[1], color[2])));
             this.renderer.render();
         };
         Level.prototype.RGBtoHEX = function (r, g, b) {
@@ -246,6 +309,9 @@ var Blindfire;
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('cat_eyes', 'assets/cat_eyes.jpg');
             this.load.image('block', 'assets/block.png');
+            this.load.image('ship1', 'assets/ship1.png');
+            this.load.image('ship2', 'assets/ship2.png');
+            this.load.image('window', 'assets/window.png');
         };
         Preloader.prototype.create = function () {
             //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -264,7 +330,6 @@ var Blindfire;
 (function (Blindfire) {
     var MemoryRenderer = (function () {
         function MemoryRenderer(game, screenRect) {
-            this.drawObjects = [];
             this.frame = 0;
             this.game = game;
             this.init(game);
@@ -284,35 +349,68 @@ var Blindfire;
             bmd.addToWorld();
             this.bmd = bmd;
         };
-        MemoryRenderer.prototype.add = function (e) {
-            this.drawObjects.push(e);
-            this.drawObjects.sort(function (a, b) { return a.z - b.z; });
-        };
-        MemoryRenderer.prototype.update = function () {
+        MemoryRenderer.prototype.update = function (drawList) {
             var _this = this;
             var game = this.game;
             this.frame++;
             this.gameBmd.clear();
-            //this.watchWindowBitmap.clear();
-            this.drawObjects.forEach(function (val) {
-                // this.gameBmd.blendReset();
+            drawList.forEach(function (val) {
                 _this.gameBmd.draw(val, val.x, val.y);
+                if (val.navNodes) {
+                    _this.drawNavLines(val);
+                }
             });
+            //this.drawNavLines(null);
             this.watchWindowBitmap = this.watchWindowBitmap.alphaMask(this.gameBmd, this.mask, null, this.maskRect);
-            if (this.frame % 2 == 0) {
-                this.bmd.blendSaturation();
-                this.bmd.fill(0, 0, 0, 0.030);
-                this.bmd.blendReset();
-            }
-            if (this.frame % 18 == 0) {
-                this.bmd.blendOverlay();
-                this.bmd.fill(0.1, 0.1, 0.1, 0.01);
-                this.bmd.blendReset();
-            }
+            //  if (this.frame % 1 == 0) {
+            this.bmd.blendSaturation();
+            this.bmd.fill(0, 0, 0, 0.03);
+            this.bmd.blendReset();
+            // }
+            // if (this.frame % 120 == 0) {
+            //    this.bmd.blendOverlay();
+            //    this.bmd.fill(0.1, 0.1, 0.1, 0.003);
+            //    this.bmd.blendReset();
+            //}
             this.bmd.draw(this.watchWindowBitmap);
+        };
+        MemoryRenderer.prototype.drawAllNoMask = function (drawList) {
+            var _this = this;
+            drawList.forEach(function (val) {
+                _this.bmd.draw(val, val.x, val.y);
+            });
         };
         MemoryRenderer.prototype.render = function () {
             this.watchWindowBitmap.clear();
+        };
+        MemoryRenderer.prototype.drawNavLines = function (guidable) {
+            if (!guidable.navNodes[0]) {
+                return;
+            }
+            var graph = this.game.make.graphics(0, 0);
+            graph.lineStyle(2, guidable.color, 1);
+            graph.moveTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
+            for (var i = 1; i < guidable.navNodes.length; i++) {
+                graph.lineTo(guidable.navNodes[i].x, guidable.navNodes[i].y);
+            }
+            var topleft = this.calcTopLeft(guidable.navNodes);
+            var sprite = this.game.make.sprite(0, 0, graph.generateTexture(null, null, null));
+            // sprite.width = 
+            //sprite.anchor.set(0.5, 0.5);
+            this.gameBmd.draw(sprite, topleft.x, topleft.y);
+        };
+        MemoryRenderer.prototype.calcTopLeft = function (points) {
+            var lowestX = 10000000000;
+            var lowestY = 10000000000;
+            for (var i = 0; i < points.length; i++) {
+                if (points[i].x < lowestX) {
+                    lowestX = points[i].x;
+                }
+                if (points[i].y < lowestY) {
+                    lowestY = points[i].y;
+                }
+            }
+            return new Phaser.Point(lowestX, lowestY);
         };
         return MemoryRenderer;
     })();

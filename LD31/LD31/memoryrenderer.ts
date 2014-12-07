@@ -11,9 +11,6 @@
 
         gameBmd: Phaser.BitmapData;
 
-
-        drawObjects: Phaser.Sprite[] = [];
-
         gameGroup: Phaser.Group;
 
         frame: number = 0;
@@ -46,56 +43,105 @@
             
             var bmd = game.add.bitmapData(game.width, game.height);
             bmd.fill(1, 1, 1, 1);
+            
             bmd.addToWorld();
             this.bmd = bmd;
-        }
-
-        add(e: Phaser.Sprite) {
-            this.drawObjects.push(e);
-            this.drawObjects.sort((a, b) => a.z - b.z); 
+            
         }
 
 
 
-        update() {
+
+        update(drawList: any[]) {
             var game = this.game;
 
 
             this.frame++;
-            
-
 
             this.gameBmd.clear();
-            //this.watchWindowBitmap.clear();
-            this.drawObjects.forEach((val) => {
-               // this.gameBmd.blendReset();
+            
+            drawList.forEach((val) => {
                 this.gameBmd.draw(val, val.x, val.y);
+                if (val.navNodes) {
+                    this.drawNavLines(val);
+                }
             });
+            //this.drawNavLines(null);
 
             this.watchWindowBitmap = this.watchWindowBitmap.alphaMask(this.gameBmd, this.mask, null, this.maskRect);
 
 
-
-            if (this.frame % 2 == 0) {
+          //  if (this.frame % 1 == 0) {
                 this.bmd.blendSaturation();
-                this.bmd.fill(0, 0, 0, 0.030);
+                this.bmd.fill(0, 0, 0, 0.03);
                 this.bmd.blendReset();
-            }
-            if (this.frame % 18 == 0) {
-                this.bmd.blendOverlay();
-                this.bmd.fill(0.1, 0.1, 0.1, 0.01);
+           // }
+           // if (this.frame % 120 == 0) {
+            //    this.bmd.blendOverlay();
+            //    this.bmd.fill(0.1, 0.1, 0.1, 0.003);
 
-                this.bmd.blendReset();
+            //    this.bmd.blendReset();
 
-            }
+            //}
 
             this.bmd.draw(this.watchWindowBitmap);
         }
 
 
+        drawAllNoMask(drawList: any[]) {
+            drawList.forEach((val) => {
+                this.bmd.draw(val, val.x, val.y);
+            });
+        }
+
         render() {
             this.watchWindowBitmap.clear();
         }
+
+        drawNavLines(guidable: Guidable) {
+            if (!guidable.navNodes[0]) {
+                return;
+
+            }
+
+
+
+            var graph = this.game.make.graphics(0, 0);
+
+            graph.lineStyle(2, guidable.color, 1);
+            
+            graph.moveTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
+            //graph.lineTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
+            for (var i = 1; i < guidable.navNodes.length; i++) {
+                graph.lineTo(guidable.navNodes[i].x, guidable.navNodes[i].y );
+            }
+
+            var topleft = this.calcTopLeft(guidable.navNodes);
+
+            var sprite = this.game.make.sprite(0, 0, graph.generateTexture(null, null, null));
+            
+           // sprite.width = 
+            //sprite.anchor.set(0.5, 0.5);
+            this.gameBmd.draw(sprite, topleft.x, topleft.y);
+            
+        }
+
+        calcTopLeft(points: Phaser.Point[]) {
+            var lowestX = 10000000000;
+            var lowestY = 10000000000;
+
+            for(var i = 0; i < points.length; i++) {
+                if (points[i].x < lowestX) {
+                    lowestX = points[i].x;
+                }
+                if (points[i].y < lowestY) {
+                    lowestY = points[i].y;
+                }
+            }
+            return new Phaser.Point(lowestX, lowestY);
+
+        }
+
 
     }
 

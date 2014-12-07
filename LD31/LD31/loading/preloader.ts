@@ -15,6 +15,9 @@
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('cat_eyes', 'assets/cat_eyes.jpg');
             this.load.image('block', 'assets/block.png');
+            this.load.image('ship1', 'assets/ship1.png');
+            this.load.image('ship2', 'assets/ship2.png');
+            this.load.image('window', 'assets/window.png');
             
 
         }
