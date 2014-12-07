@@ -17,14 +17,14 @@
             this.gameObjects.sort((a, b) => a.z - b.z);
         }
 
-        addGuidable(x, y, asset, color: number, heli) {
-            var sprite = new Guidable(this.game, x, y, asset, color, heli);
+        addGuidable(x, y, color: number, heli) {
+            var sprite = new Guidable(this.game, x, y, heli? 'heli': 'ship2', color, heli);
             this.addToGame(sprite);
             this.guidables.push(sprite);
         }
 
-        addRunway(x, y, dx, dy, type, color) {
-            var sprite = new Runway(this.game, x, y, dx, dy, color);
+        addRunway(x, y, dx, dy, type, color, heli) {
+            var sprite = new Runway(this.game, x, y, dx, dy, color, heli);
             this.addToGame(sprite);
             this.runways.push(sprite);
         }
@@ -132,8 +132,8 @@
 
         update() {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y)
-           // console.log('x' + mousePos.x);
-           // console.log('y' + mousePos.y);
+            console.log('x ' + mousePos.x);
+            console.log('y ' + mousePos.y);
 
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
 

@@ -10,12 +10,13 @@ var FlyingBlind;
         __extends(FlyingBlind, _super);
         function FlyingBlind() {
             _super.call(this, 1024, 720, Phaser.AUTO, 'content', null, true);
-            this.renderer = new PIXI.WebGLRenderer(1024, 700, { transparent: true, clearBeforeRender: false });
+            this.renderer = new PIXI.WebGLRenderer(1024, 720, { transparent: true, clearBeforeRender: false });
             this.state.add('Boot', _FlyingBlind.Boot, false);
             this.state.add('Preloader', _FlyingBlind.Preloader, false);
             this.state.add('MainMenu', _FlyingBlind.MainMenu, false);
             // this.state.add('Level1', Level1, false);
             this.state.add('MainLevel', _FlyingBlind.MainLevel, false);
+            this.state.add('TutLevel', _FlyingBlind.TutLevel, false);
             console.log("go");
             this.state.start('Boot');
         }
@@ -125,6 +126,7 @@ var FlyingBlind;
             this.drawing = false;
             this.velocity = new Phaser.Point(0, 0);
             this.landing = false;
+            this.heli = false;
             this.onMouseClick = function (guidable, pointer) {
                 if (_this.landing) {
                     return;
@@ -137,6 +139,8 @@ var FlyingBlind;
                 //console.log("release");
                 _this.drawing = false;
             };
+            this.i = 0;
+            this.frameM = 0;
             this.color = color;
             this.tint = color;
             this.anchor.setTo(0.5, 0.5);
@@ -149,14 +153,28 @@ var FlyingBlind;
             this.landing = true;
             this.drawing = false;
             this.navNodes = [];
-            this.velocity = direction;
+            if (this.heli) {
+                this.velocity = new Phaser.Point(0, 0);
+            }
+            else {
+                this.velocity = direction;
+            }
+            this.updateRotation();
             this.landCallback = landCallback;
         };
         Guidable.prototype.update = function () {
+            this.i++;
+            if (this.heli && this.i % 2 == 0) {
+                this.frameM++;
+                if (this.frameM > 5) {
+                    this.frameM = 0;
+                }
+                this.loadTexture('heli' + this.frameM, null);
+            }
             if (this.landing) {
                 //  this.speed = 1;
-                this.speed -= 0.13 * (this.game.time.elapsed / 1000);
-                if (this.scale.getMagnitude() > 0.6) {
+                this.speed -= 0.08 * (this.game.time.elapsed / 1000);
+                if (this.scale.getMagnitude() > 0.64) {
                     this.scale.x -= 0.10 * (this.game.time.elapsed / 1000);
                     this.scale.y -= 0.10 * (this.game.time.elapsed / 1000);
                 }
@@ -176,7 +194,7 @@ var FlyingBlind;
                     this.navNodes.push(this.game.input.activePointer.position.clone());
                 }
             }
-            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 22) {
+            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 5) {
                 this.navNodes.shift();
             }
             if (this.navNodes.length == 0) {
@@ -209,7 +227,7 @@ var FlyingBlind;
             this.position = this.position.add(this.velocity.x, this.velocity.y);
         };
         Guidable.prototype.updateRotation = function () {
-            if (this.velocity.x != 0 && this.velocity.y != 0) {
+            if (!(this.velocity.x == 0 && this.velocity.y == 0)) {
                 this.rotation = this.game.physics.arcade.moveToXY(this, this.x + this.velocity.x, this.y + this.velocity.y, this.speed, 10);
             }
         };
@@ -256,13 +274,13 @@ var FlyingBlind;
             this.gameObjects.push(e);
             this.gameObjects.sort(function (a, b) { return a.z - b.z; });
         };
-        GameLevel.prototype.addGuidable = function (x, y, asset, color, heli) {
-            var sprite = new FlyingBlind.Guidable(this.game, x, y, asset, color, heli);
+        GameLevel.prototype.addGuidable = function (x, y, color, heli) {
+            var sprite = new FlyingBlind.Guidable(this.game, x, y, heli ? 'heli' : 'ship2', color, heli);
             this.addToGame(sprite);
             this.guidables.push(sprite);
         };
-        GameLevel.prototype.addRunway = function (x, y, dx, dy, type, color) {
-            var sprite = new FlyingBlind.Runway(this.game, x, y, dx, dy, color);
+        GameLevel.prototype.addRunway = function (x, y, dx, dy, type, color, heli) {
+            var sprite = new FlyingBlind.Runway(this.game, x, y, dx, dy, color, heli);
             this.addToGame(sprite);
             this.runways.push(sprite);
         };
@@ -313,8 +331,8 @@ var FlyingBlind;
         };
         GameLevel.prototype.update = function () {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
-            // console.log('x' + mousePos.x);
-            // console.log('y' + mousePos.y);
+            console.log('x ' + mousePos.x);
+            console.log('y ' + mousePos.y);
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
             var desiredVel = mousePos.subtract(curPos.x, curPos.y).multiply(0.2, 0.2);
             if (desiredVel.getMagnitude() > this.maxSpeed) {
@@ -415,6 +433,13 @@ var FlyingBlind;
             this.load.image('runway', 'assets/runway.png');
             this.load.image('helipad', 'assets/helipad.png');
             this.load.image('landicon', 'assets/landicon.png');
+            this.load.image('heli', 'assets/heli.png');
+            this.load.image('heli0', 'assets/heli0.png');
+            this.load.image('heli1', 'assets/heli1.png');
+            this.load.image('heli2', 'assets/heli2.png');
+            this.load.image('heli3', 'assets/heli3.png');
+            this.load.image('heli4', 'assets/heli4.png');
+            this.load.image('heli5', 'assets/heli5.png');
         };
         Preloader.prototype.create = function () {
             //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -423,7 +448,8 @@ var FlyingBlind;
         };
         Preloader.prototype.startMainMenu = function () {
             // this.game.state.start('MainMenu', true, false);
-            this.game.state.start('MainLevel', true, false);
+            //this.game.state.start('MainLevel', true, false);
+            this.game.state.start('TutLevel', true, false);
         };
         return Preloader;
     })(Phaser.State);
@@ -439,13 +465,15 @@ var FlyingBlind;
         MainLevel.prototype.create = function () {
             this.background = this.game.make.sprite(0, 0, 'background');
             this.addToGame(this.background);
-            this.addRunway(296, 195, 1, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
-            this.addRunway(390, 100, 1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
-            this.addRunway(821, 279, -1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
-            this.addRunway(392, 613, 1, -1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(296, 195, 1, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), false);
+            this.addRunway(390, 100, 1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), false);
+            this.addRunway(821, 279, -1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), false);
+            this.addRunway(392, 613, 1, -1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), false);
+            this.addRunway(307, 288, 0, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
+            this.addRunway(307, 374, 0, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
             _super.prototype.create.call(this);
-            this.addGuidable(50, 50, 'ship2', 0xeeeeee, false);
-            this.addGuidable(100, 50, 'ship2', 0xffffff, true);
+            this.addGuidable(50, 50, 0xeeeeee, false);
+            this.addGuidable(100, 50, 0xffffff, true);
         };
         return MainLevel;
     })(FlyingBlind.GameLevel);
@@ -548,19 +576,20 @@ var FlyingBlind;
 (function (FlyingBlind) {
     var Runway = (function (_super) {
         __extends(Runway, _super);
-        function Runway(game, x, y, dx, dy, color) {
+        function Runway(game, x, y, dx, dy, color, heli) {
             _super.call(this, game, x, y, 'landicon');
             this.direction = new Phaser.Point(dx, dy);
             this.anchor.set(0.5, 0.5);
+            this.heli = heli;
             this.color = color;
             this.tint = color;
-            this.alpha = 0;
+            //this.alpha = 0;
             this.rotation = this.game.physics.arcade.angleToXY(this, this.x + this.direction.x, this.y + this.direction.y);
             this.scale = new Phaser.Point(0.2, 0.2);
         }
         Runway.prototype.checkLanded = function (plane) {
-            if (this.position.distance(plane.position) < 18.5) {
-                if (Math.abs(this.angleBetween(plane.velocity, this.direction)) < 0.6) {
+            if (plane.heli == this.heli && this.position.distance(plane.position) < (this.heli ? 26.5 : 19)) {
+                if (plane.heli || Math.abs(this.angleBetween(plane.velocity, this.direction)) < 0.6) {
                     //console.log('angle' + this.angleBetween(plane.velocity, this.direction) + ' dirX ' + plane.velocity.x + ' dirY ' + plane.velocity.y);
                     return true;
                 }
@@ -576,5 +605,26 @@ var FlyingBlind;
         return Runway;
     })(Phaser.Sprite);
     FlyingBlind.Runway = Runway;
+})(FlyingBlind || (FlyingBlind = {}));
+var FlyingBlind;
+(function (FlyingBlind) {
+    var TutLevel = (function (_super) {
+        __extends(TutLevel, _super);
+        function TutLevel() {
+            _super.apply(this, arguments);
+        }
+        TutLevel.prototype.create = function () {
+            this.background = this.game.make.sprite(0, 0, 'tutlevel');
+            this.addToGame(this.background);
+            this.addRunway(394, 309, 1, -1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
+            this.addRunway(307, 341, 1, -1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
+            this.addRunway(295, 504, 681 - 295, 299 - 504, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), false);
+            _super.prototype.create.call(this);
+            this.addGuidable(50, 50, 0xeeeeee, false);
+            this.addGuidable(100, 50, 0xffffff, true);
+        };
+        return TutLevel;
+    })(FlyingBlind.GameLevel);
+    FlyingBlind.TutLevel = TutLevel;
 })(FlyingBlind || (FlyingBlind = {}));
 //# sourceMappingURL=flyingblind.js.map

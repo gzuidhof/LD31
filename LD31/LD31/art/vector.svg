@@ -115,26 +115,29 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="321.03859"
-     inkscape:cy="869.61525"
+     inkscape:zoom="5.6"
+     inkscape:cx="209.84176"
+     inkscape:cy="342.57091"
      inkscape:document-units="px"
-     inkscape:current-layer="g6242"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:snap-bbox="true"
-     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:snap-bbox-edge-midpoints="true"
      inkscape:bbox-nodes="true"
-     inkscape:snap-global="false"
+     inkscape:snap-global="true"
      inkscape:object-paths="true"
      inkscape:snap-intersection-paths="true"
-     inkscape:snap-nodes="true"
+     inkscape:snap-nodes="false"
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-object-midpoints="true"
      inkscape:window-width="1920"
      inkscape:window-height="1018"
      inkscape:window-x="1672"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:snap-others="false"
+     inkscape:object-nodes="false"
+     inkscape:snap-midpoints="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -3305,6 +3308,420 @@
              x="329.96912"
              y="-150.55493" />
         </g>
+      </g>
+      <rect
+         style="fill:#cccccc;fill-opacity:1;stroke:none"
+         id="rect4461"
+         width="37.945892"
+         height="4.2931485"
+         x="263.99603"
+         y="724.69397" />
+      <rect
+         y="696.39258"
+         x="282.17065"
+         height="7.8286824"
+         width="69.19545"
+         id="rect4463"
+         style="fill:#cccccc;fill-opacity:1;stroke:none" />
+    </g>
+    <g
+       id="g4652"
+       transform="matrix(-1,0,0,-1,401.25021,1451.5353)">
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         style="fill:#cccccc;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 214.19421,725.72678 21.67036,0 C 228.54816,724.14608 217.88572,724.53264 211.73196,722.28691 Z"
+         id="path4562"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccc" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         transform="scale(1,-1)"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         id="rect4564"
+         width="0.94701803"
+         height="2.3526671"
+         x="183.78462"
+         y="-720.31403" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         transform="scale(1,-1)"
+         y="-720.31403"
+         x="202.85126"
+         height="2.3526671"
+         width="0.94701803"
+         id="rect4566"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         style="fill:#b3b3b3;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 168.34502,725.76763 c -0.41847,-1.49432 0.51714,-3.31833 4.45898,-5.8788 11.77715,-0.8084 24.38018,-1.4095 35.00232,-0.75039 C 211.50754,724.97552 221.825,722.0042 221.01885,725.76763 Z"
+         id="path4568"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         style="fill:#808080;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 191.04492,725.76767 0,-6.81173 c 5.84267,-0.15973 11.54257,-0.14189 16.76172,0.18196 0.51721,0.81567 1.16734,1.45434 1.89453,1.96842 -0.1627,1.55229 -0.29062,3.10505 -0.33008,4.66135 L 191.04492,725.76767 Z"
+         id="path4570" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         style="fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 172.56473,725.44452 c 1.53299,-0.19148 3.13325,-0.16479 4.84467,0 l 0,-4.66169 c -1.39438,-0.83836 -2.96605,-1.00265 -4.84467,0 C 169.80234,724.23406 171.20801,724.80715 172.56473,725.44452 Z"
+         id="path4572"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         style="fill:#cccccc;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 225.83223,725.66102 5.61898,0 c 0.5423,-2.63436 -1.27155,-5.47079 -1.32583,-8.23433 l -3.6618,0 C 226.28297,720.19331 226.00834,723.02478 225.83223,725.66102 Z"
+         id="path4574"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         transform="scale(1,-1)"
+         style="fill:#1a1a1a;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         id="rect4576"
+         width="11.428572"
+         height="0.5293231"
+         x="222.94655"
+         y="-724.4549" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         transform="scale(1,-1)"
+         style="fill:#1a1a1a;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         id="rect4578"
+         width="0.89285713"
+         height="1.4178298"
+         x="228.19209"
+         y="-725.2489" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 183.20508,725.76767 -2.35742,-6.37338 c 4.03311,-0.22236 8.07226,-0.39249 12.04296,-0.47474 l 5.87696,1.11324 -6.22852,5.73488 L 183.20508,725.76767 Z"
+         id="path4580" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         transform="scale(1,-1)"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         id="rect4582"
+         width="25.401785"
+         height="0.94521987"
+         x="181.68073"
+         y="-718.32996" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         sodipodi:nodetypes="cccc"
+         inkscape:connector-curvature="0"
+         id="rect4465"
+         d="m 214.19421,725.80847 c 7.28171,-0.64078 14.46929,-0.24625 21.67036,0 C 228.54816,727.38918 217.88572,727.00262 211.73196,729.24835 Z"
+         style="fill:#cccccc;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         y="731.22119"
+         x="183.78462"
+         height="2.3526671"
+         width="0.94701803"
+         id="rect4532"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         id="rect4534"
+         width="0.94701803"
+         height="2.3526671"
+         x="202.85126"
+         y="731.22119" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 225.49361,725.92719 6.40816,0 c 1.99862,0.004 0.73355,-0.68237 0,-1.25653 -3.30992,0.285 -4.30772,0.0456 -6.40816,0 C 225.30768,725.08122 224.92305,725.48292 225.49361,725.92719 Z"
+         id="path4584"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="rect4467"
+         d="m 168.34502,725.76763 c -0.41847,1.49431 0.51714,3.31832 4.45898,5.87879 11.77715,0.8084 24.38018,1.4095 35.00232,0.7504 C 211.50754,726.55973 221.825,729.53105 221.01885,725.76763 Z"
+         style="fill:#b3b3b3;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 167.43279,725.76797 3.03045,0 c 2.39313,0.0848 0.6256,-0.39616 0,-0.72184 -1.01302,-0.0558 -2.03128,-0.21389 -3.03045,0 C 167.28806,725.34163 166.66894,725.81702 167.43279,725.76797 Z"
+         id="path4586"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         id="rect4544"
+         d="m 191.04492,725.76758 0,6.81173 c 5.84267,0.15973 11.54257,0.14189 16.76172,-0.18196 0.51721,-0.81566 1.16734,-1.45434 1.89453,-1.96842 -0.1627,-1.55229 -0.29062,-3.10504 -0.33008,-4.66135 L 191.04492,725.76758 Z"
+         style="fill:#808080;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         style="fill:#808080;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 191.29688,720.20647 0,-1.23729 c 0.52977,-0.014 1.06621,-0.0387 1.59374,-0.0496 l 5.87696,1.11324 -0.18946,0.17368 L 191.29688,720.20647 Z"
+         id="path4588" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="rect4470"
+         d="m 172.14062,725.80717 c 1.49545,0.0903 3.47804,0.57653 5.26878,0.28356 l 0,4.6617 c -1.39438,0.83835 -2.96605,1.00265 -4.84467,0 C 169.80829,726.31986 171.57193,726.43032 172.14062,725.80717 Z"
+         style="fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         id="path4590"
+         d="m 191.29688,720.20647 0,-1.23729 c 0.52977,-0.014 1.06621,-0.0387 1.59374,-0.0496 l 5.87696,1.11324 -0.18946,0.17368 L 191.29688,720.20647 Z"
+         style="fill:#666666;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="rect4477"
+         d="m 225.83223,725.87424 5.61898,0 c 0.5423,2.63436 -1.27155,5.47078 -1.32583,8.23432 l -3.6618,0 C 226.28297,731.34194 226.00834,728.51047 225.83223,725.87424 Z"
+         style="fill:#cccccc;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         y="727.08032"
+         x="222.94655"
+         height="0.5293231"
+         width="11.428572"
+         id="rect4480"
+         style="fill:#1a1a1a;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         sodipodi:type="star"
+         style="fill:#666666;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         id="path4592"
+         sodipodi:sides="3"
+         sodipodi:cx="181.41708"
+         sodipodi:cy="726.14606"
+         sodipodi:r1="3.4529741"
+         sodipodi:r2="1.726487"
+         sodipodi:arg1="0.24941322"
+         sodipodi:arg2="1.2966108"
+         inkscape:flatsided="true"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m 184.76321,726.99837 -5.75732,1.61936 L 180.48215,722.82207 Z"
+         inkscape:transform-center-x="0.84465576"
+         inkscape:transform-center-y="0.0064390323"
+         transform="matrix(0.70710678,-0.21268808,-0.70710678,-0.21268808,570.14237,918.78906)" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         y="726.28632"
+         x="228.19209"
+         height="1.4178298"
+         width="0.89285713"
+         id="rect4482"
+         style="fill:#1a1a1a;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         id="path4539"
+         d="m 183.20508,725.76758 -2.35742,6.37338 c 4.03311,0.22236 8.07226,0.39249 12.04296,0.47474 l 5.87696,-1.11323 -6.22852,-5.73489 L 183.20508,725.76758 Z"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <rect
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         y="733.20526"
+         x="181.68073"
+         height="0.94521987"
+         width="25.401785"
+         id="rect4530"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="rect4503"
+         d="m 225.49361,725.60806 6.40816,0 c 1.99862,-0.004 0.73355,0.68238 0,1.25654 -3.30992,-0.28501 -4.30772,-0.0456 -6.40816,0 C 225.30768,726.45404 224.92305,726.05233 225.49361,725.60806 Z"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="rect4506"
+         d="m 167.43279,725.76728 3.00813,-0.20795 c 2.39313,-0.0848 0.64792,0.60411 0.0223,0.92979 -1.01302,0.0558 -2.03128,0.21389 -3.03045,0 C 167.28806,726.19363 166.66894,725.71823 167.43279,725.76728 Z"
+         style="fill:#999999;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         id="rect4550"
+         d="m 191.29688,731.32878 0,1.23729 c 0.52977,0.014 1.06621,0.0387 1.59374,0.0496 l 5.87696,-1.11323 -0.18946,-0.17369 L 191.29688,731.32878 Z"
+         style="fill:#808080;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         inkscape:connector-curvature="0"
+         style="fill:#666666;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         d="m 191.29688,731.32878 0,1.23729 c 0.52977,0.014 1.06621,0.0387 1.59374,0.0496 l 5.87696,-1.11323 -0.18946,-0.17369 L 191.29688,731.32878 Z"
+         id="path4557" />
+      <path
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         transform="matrix(0.70710678,0.21268808,-0.70710678,0.21268808,570.14237,532.7462)"
+         inkscape:transform-center-y="-0.0064291376"
+         inkscape:transform-center-x="0.84465576"
+         d="m 184.76321,726.99837 -5.75732,1.61936 L 180.48215,722.82207 Z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="true"
+         sodipodi:arg2="1.2966108"
+         sodipodi:arg1="0.24941322"
+         sodipodi:r2="1.726487"
+         sodipodi:r1="3.4529741"
+         sodipodi:cy="726.14606"
+         sodipodi:cx="181.41708"
+         sodipodi:sides="3"
+         id="path4560"
+         style="fill:#666666;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+         sodipodi:type="star" />
+      <g
+         inkscape:export-ydpi="89.503441"
+         inkscape:export-xdpi="89.503441"
+         inkscape:export-filename="C:\Users\Guido\Documents\GitHub\LD31\LD31\LD31\assets\heli.png"
+         id="g4600">
+        <path
+           sodipodi:type="arc"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+           id="path4486"
+           sodipodi:cx="189.46674"
+           sodipodi:cy="724.1889"
+           sodipodi:rx="3.4723995"
+           sodipodi:ry="3.4723995"
+           d="m 192.93914,724.1889 c 0,1.91776 -1.55465,3.4724 -3.4724,3.4724 -1.91776,0 -3.4724,-1.55464 -3.4724,-3.4724 0,-1.91775 1.55464,-3.4724 3.4724,-3.4724 C 191.38449,720.7165 192.93914,722.27115 192.93914,724.1889 Z"
+           transform="translate(7.1235561,1.578725)" />
+        <path
+           transform="matrix(0,1,-1,0,912.5145,570.53896)"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+           d="m 156.4136,718.04194 -3.15618,-3.66127 c 7.35116,-6.00041 14.22443,-11.86785 17.45984,-16.8285 1.61935,-0.0629 5.05509,1.67224 4.41887,3.02992 C 167.33442,705.74542 160.87204,711.19817 156.4136,718.04194 Z"
+           id="path4618"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccc" />
+        <path
+           sodipodi:nodetypes="ccccc"
+           inkscape:connector-curvature="0"
+           id="path4515"
+           d="m 198.40218,727.2584 -3.15618,-3.66127 c 7.35116,-6.00041 14.22443,-11.86785 17.45984,-16.8285 1.61935,-0.0629 5.05509,1.67224 4.41887,3.02992 C 209.323,714.96188 202.86062,720.41463 198.40218,727.2584 Z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none;filter:url(#filter6570)" />
+        <path
+           transform="matrix(0,-1,1,0,-519.33391,880.99629)"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+           d="m 156.4136,718.04194 -3.15618,-3.66127 c 7.35116,-6.00041 14.22443,-11.86785 17.45984,-16.8285 1.61935,-0.0629 5.05509,1.67224 4.41887,3.02992 C 167.33442,705.74542 160.87204,711.19817 156.4136,718.04194 Z"
+           id="path4614"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccc" />
+        <path
+           sodipodi:nodetypes="ccccc"
+           inkscape:connector-curvature="0"
+           id="path4616"
+           d="m 156.4136,718.04194 -3.15618,-3.66127 c 7.35116,-6.00041 14.22443,-11.86785 17.45984,-16.8285 1.61935,-0.0629 5.05509,1.67224 4.41887,3.02992 C 167.33442,705.74542 160.87204,711.19817 156.4136,718.04194 Z"
+           style="fill:#4d4d4d;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+           transform="matrix(-1,0,0,-1,351.81896,1441.6918)" />
+        <path
+           sodipodi:type="arc"
+           style="fill:#666666;fill-opacity:1;stroke:none;filter:url(#filter6570)"
+           id="path4493"
+           sodipodi:cx="203.25151"
+           sodipodi:cy="743.02832"
+           sodipodi:rx="4.7802925"
+           sodipodi:ry="4.7802925"
+           d="m 208.0318,743.02832 c 0,2.64008 -2.14021,4.78029 -4.78029,4.78029 -2.64008,0 -4.78029,-2.14021 -4.78029,-4.78029 0,-2.64008 2.14021,-4.78029 4.78029,-4.78029 C 205.89159,738.24803 208.0318,740.38824 208.0318,743.02832 Z"
+           transform="matrix(0.61710353,0,0,0.61710353,71.163068,267.24222)" />
+        <path
+           style="fill:#999999;fill-opacity:1;stroke:none"
+           d="m 196.19966,724.91448 c 0.1055,-0.31842 0.25305,-0.61392 0,-1.12789 0.22329,-0.52318 0.45549,-0.92088 0.78125,0 -0.045,0.38046 -0.1762,0.76959 0,1.12789 C 196.25295,726.78946 196.43822,725.00213 196.19966,724.91448 Z"
+           id="rect4499"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccc" />
+        <path
+           sodipodi:nodetypes="ccccc"
+           inkscape:connector-curvature="0"
+           id="path4524"
+           d="m 197.44344,725.37701 c 0.31842,0.1055 0.61392,0.25305 1.12789,0 0.52317,0.22329 0.92088,0.45549 0,0.78125 -0.38047,-0.045 -0.76959,-0.1762 -1.12789,0 C 195.56845,725.43029 197.35578,725.61556 197.44344,725.37701 Z"
+           style="fill:#999999;fill-opacity:1;stroke:none" />
+        <path
+           style="fill:#999999;fill-opacity:1;stroke:none"
+           d="m 196.98091,726.62077 c -0.1055,0.31842 -0.25305,0.61392 0,1.12789 -0.22328,0.52317 -0.45548,0.92088 -0.78125,0 0.045,-0.38046 0.1762,-0.76959 0,-1.12789 C 196.92762,724.74578 196.74236,726.53311 196.98091,726.62077 Z"
+           id="path4526"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccc" />
+        <path
+           sodipodi:nodetypes="ccccc"
+           inkscape:connector-curvature="0"
+           id="path4528"
+           d="m 195.73714,726.15824 c -0.31842,-0.1055 -0.61392,-0.25305 -1.12789,0 -0.52317,-0.22328 -0.92088,-0.45548 0,-0.78125 0.38047,0.045 0.76959,0.1762 1.12789,0 C 197.61213,726.10496 195.8248,725.9197 195.73714,726.15824 Z"
+           style="fill:#999999;fill-opacity:1;stroke:none" />
       </g>
     </g>
   </g>

@@ -12,7 +12,7 @@
         landing: boolean = false;
         landCallback: (g: Guidable) => void;
 
-        heli: boolean;
+        heli: boolean = false;
 
         constructor(game: Phaser.Game, x: number, y: number, key, color, heli) {
             super(game, x, y, key);
@@ -47,18 +47,39 @@
             this.landing = true;
             this.drawing = false;
             this.navNodes = [];
-            this.velocity = direction;
+            if (this.heli) {
+                this.velocity = new Phaser.Point(0, 0);
+            }
+            else {
+                this.velocity = direction;
+            }
+            this.updateRotation();
             this.landCallback = landCallback;
         }
 
 
-        
+
+
+
+        i = 0;
+        frameM = 0;
+
         update() {
+            this.i++;
+            if (this.heli && this.i % 2 == 0) {
+                
+                this.frameM++;
+                if (this.frameM > 5) {
+                    this.frameM = 0;
+                }
+                this.loadTexture('heli' + this.frameM, null);
+            }
+
 
             if (this.landing) {
               //  this.speed = 1;
-                this.speed -= 0.13 * (this.game.time.elapsed / 1000);
-                if (this.scale.getMagnitude() > 0.6) {
+                this.speed -= 0.08 * (this.game.time.elapsed / 1000);
+                if (this.scale.getMagnitude() > 0.64) {
                     this.scale.x -= 0.10 * (this.game.time.elapsed / 1000);
                     this.scale.y -= 0.10 * (this.game.time.elapsed / 1000);
                 }
@@ -85,7 +106,7 @@
             }
 
             
-            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 22) {
+            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 5) {
                 this.navNodes.shift();
             }
 
@@ -133,7 +154,7 @@
         }
 
         updateRotation() {
-            if (this.velocity.x != 0 && this.velocity.y != 0) {
+            if (! (this.velocity.x == 0 && this.velocity.y == 0)) {
                 this.rotation = this.game.physics.arcade.moveToXY(this, this.x + this.velocity.x, this.y + this.velocity.y, this.speed, 10);
             }
         }

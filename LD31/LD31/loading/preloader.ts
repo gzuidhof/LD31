@@ -21,6 +21,14 @@
             this.load.image('runway', 'assets/runway.png');
             this.load.image('helipad', 'assets/helipad.png');
             this.load.image('landicon', 'assets/landicon.png');
+            this.load.image('heli', 'assets/heli.png');
+
+            this.load.image('heli0', 'assets/heli0.png');
+            this.load.image('heli1', 'assets/heli1.png');
+            this.load.image('heli2', 'assets/heli2.png');
+            this.load.image('heli3', 'assets/heli3.png');
+            this.load.image('heli4', 'assets/heli4.png');
+            this.load.image('heli5', 'assets/heli5.png');
             
 
         }
@@ -35,7 +43,8 @@
         startMainMenu() {
 
            // this.game.state.start('MainMenu', true, false);
-            this.game.state.start('MainLevel', true, false);
+            //this.game.state.start('MainLevel', true, false);
+            this.game.state.start('TutLevel', true, false);
         }
 
     }

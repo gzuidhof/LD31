@@ -37,6 +37,7 @@
     <TypeScriptCompile Include="mainlevel.ts" />
     <TypeScriptCompile Include="memoryrenderer.ts" />
     <TypeScriptCompile Include="runway.ts" />
+    <TypeScriptCompile Include="tutlevel.ts" />
     <TypeScriptCompile Include="typings\phaser.d.ts" />
     <TypeScriptCompile Include="typings\pixi.d.ts" />
   </ItemGroup>
