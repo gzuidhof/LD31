@@ -276,6 +276,23 @@ var FlyingBlind;
                 });
             });
         };
+        GameLevel.prototype.checkForCollisions = function () {
+            for (var i = 0; i < this.guidables.length; i++) {
+                for (var j = i + 1; j < this.guidables.length; j++) {
+                    //if (j !== i) {
+                    var planeA = this.guidables[i];
+                    var planeB = this.guidables[j];
+                    if (!planeA.landing && !planeB.landing) {
+                        if (planeA.position.distance(planeB.position) < 34.5) {
+                            this.onCollision(planeA, planeB);
+                        }
+                    }
+                }
+            }
+        };
+        GameLevel.prototype.onCollision = function (planeA, planeB) {
+            console.log('Collision!');
+        };
         GameLevel.prototype.removeFromList = function (el, l) {
             var index = l.indexOf(el);
             if (index > -1) {
@@ -307,6 +324,7 @@ var FlyingBlind;
             this.maskRect.centerOn(curPos.x + this.velocity.x, (curPos.y + this.velocity.y));
             this.windowSprite.position.set(this.maskRect.centerX, this.maskRect.centerY);
             this.checkForLandings();
+            this.checkForCollisions();
             for (var i = 0; i < this.gameObjects.length; i++) {
                 this.gameObjects[i].update();
             }
