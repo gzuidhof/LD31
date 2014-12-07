@@ -1,7 +1,7 @@
 ﻿module Blindfire {
     export class Level extends Phaser.State {
 
-        //background: Phaser.Sprite;
+        background: Phaser.Sprite;
         windowSprite: Phaser.Sprite;
 
         renderer: MemoryRenderer;
@@ -24,7 +24,9 @@
             game.physics.startSystem(Phaser.Physics.ARCADE);
 
             
-            //this.background = this.game.make.sprite(0, 0, 'cat_eyes');
+            this.background = this.game.make.sprite(0, 0, 'background');
+            this.addToGame(this.background);
+
             var runway = this.game.make.sprite(0, 0, 'runway');
             var col = 
             runway.tint = GoldenColorGenerator.generateColor32bitEncoded();
@@ -33,7 +35,7 @@
             this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
 
             this.renderer = new MemoryRenderer(game, this.maskRect);
-            //this.addToGame(this.background);
+            
 
             this.renderer.drawAllNoMask(this.gameObjects);
 

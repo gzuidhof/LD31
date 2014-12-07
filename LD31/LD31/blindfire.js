@@ -216,13 +216,13 @@ var Blindfire;
             this.gameObjects = [];
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
-            //this.background = this.game.make.sprite(0, 0, 'cat_eyes');
+            this.background = this.game.make.sprite(0, 0, 'background');
+            this.addToGame(this.background);
             var runway = this.game.make.sprite(0, 0, 'runway');
             var col = runway.tint = Blindfire.GoldenColorGenerator.generateColor32bitEncoded();
             this.addToGame(runway);
             this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
             this.renderer = new Blindfire.MemoryRenderer(game, this.maskRect);
-            //this.addToGame(this.background);
             this.renderer.drawAllNoMask(this.gameObjects);
             // this.renderer.add(this.background);
             var color = Blindfire.GoldenColorGenerator.generateColor();
@@ -327,7 +327,7 @@ var Blindfire;
             this.load.setPreloadSprite(this.preloadBar);
             //  Load our actual games assets
             this.load.audio('music', 'assets/title.mp3', true);
-            this.load.image('cat_eyes', 'assets/cat_eyes.jpg');
+            this.load.image('background', 'assets/background.png');
             this.load.image('block', 'assets/block.png');
             this.load.image('ship1', 'assets/ship1.png');
             this.load.image('ship2', 'assets/ship2.png');
@@ -438,5 +438,16 @@ var Blindfire;
         return MemoryRenderer;
     })();
     Blindfire.MemoryRenderer = MemoryRenderer;
+})(Blindfire || (Blindfire = {}));
+var Blindfire;
+(function (Blindfire) {
+    var Runway = (function (_super) {
+        __extends(Runway, _super);
+        function Runway() {
+            _super.apply(this, arguments);
+        }
+        return Runway;
+    })(Phaser.Sprite);
+    Blindfire.Runway = Runway;
 })(Blindfire || (Blindfire = {}));
 //# sourceMappingURL=blindfire.js.map
