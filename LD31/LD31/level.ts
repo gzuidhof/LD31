@@ -21,6 +21,7 @@
             var sprite = new Guidable(this.game, x, y, heli? 'heli': 'ship2', color, heli);
             this.addToGame(sprite);
             this.guidables.push(sprite);
+            return sprite;
         }
 
         addRunway(x, y, dx, dy, type, color, heli) {
@@ -91,7 +92,7 @@
         create() {
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
+            this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
             this.renderer = new MemoryRenderer(game, this.maskRect);
             
 
@@ -132,8 +133,8 @@
 
         update() {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y)
-            console.log('x ' + mousePos.x);
-            console.log('y ' + mousePos.y);
+            //console.log('x ' + mousePos.x);
+            //console.log('y ' + mousePos.y);
 
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
 

@@ -4,7 +4,7 @@
         navNodes: Phaser.Point[];
         hitboxRadius = 20;
 
-        speed = 1;
+        speed = 0.9;
         drawing: boolean = false;
         velocity = new Phaser.Point(0, 0);
         color: number;
@@ -13,6 +13,7 @@
         landCallback: (g: Guidable) => void;
 
         heli: boolean = false;
+        hasEverBeenClicked: boolean = false;
 
         constructor(game: Phaser.Game, x: number, y: number, key, color, heli) {
             super(game, x, y, key);
@@ -95,6 +96,7 @@
 
 
             if (this.drawing) {
+                this.hasEverBeenClicked = true;
                 if (this.navNodes.length > 0) {
                     if (this.navNodes[this.navNodes.length - 1].distance(this.game.input.activePointer.position) > 15) {
                         this.navNodes.push(this.game.input.activePointer.position.clone());
@@ -113,7 +115,7 @@
 
             if (this.navNodes.length == 0) {
                 
-                if (this.heli) {
+                if (this.heli && this.hasEverBeenClicked) {
                     this.velocity = new Phaser.Point(0, 0);
                 }
             }

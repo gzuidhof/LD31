@@ -122,11 +122,12 @@ var FlyingBlind;
             var _this = this;
             _super.call(this, game, x, y, key);
             this.hitboxRadius = 20;
-            this.speed = 1;
+            this.speed = 0.9;
             this.drawing = false;
             this.velocity = new Phaser.Point(0, 0);
             this.landing = false;
             this.heli = false;
+            this.hasEverBeenClicked = false;
             this.onMouseClick = function (guidable, pointer) {
                 if (_this.landing) {
                     return;
@@ -185,6 +186,7 @@ var FlyingBlind;
                 this.navNodes = [];
             }
             if (this.drawing) {
+                this.hasEverBeenClicked = true;
                 if (this.navNodes.length > 0) {
                     if (this.navNodes[this.navNodes.length - 1].distance(this.game.input.activePointer.position) > 15) {
                         this.navNodes.push(this.game.input.activePointer.position.clone());
@@ -198,7 +200,7 @@ var FlyingBlind;
                 this.navNodes.shift();
             }
             if (this.navNodes.length == 0) {
-                if (this.heli) {
+                if (this.heli && this.hasEverBeenClicked) {
                     this.velocity = new Phaser.Point(0, 0);
                 }
             }
@@ -278,6 +280,7 @@ var FlyingBlind;
             var sprite = new FlyingBlind.Guidable(this.game, x, y, heli ? 'heli' : 'ship2', color, heli);
             this.addToGame(sprite);
             this.guidables.push(sprite);
+            return sprite;
         };
         GameLevel.prototype.addRunway = function (x, y, dx, dy, type, color, heli) {
             var sprite = new FlyingBlind.Runway(this.game, x, y, dx, dy, color, heli);
@@ -320,7 +323,7 @@ var FlyingBlind;
         GameLevel.prototype.create = function () {
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
+            this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
             this.renderer = new FlyingBlind.MemoryRenderer(game, this.maskRect);
             this.renderer.drawAllNoMask(this.gameObjects);
             //this.game.input.ad
@@ -331,8 +334,8 @@ var FlyingBlind;
         };
         GameLevel.prototype.update = function () {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
-            console.log('x ' + mousePos.x);
-            console.log('y ' + mousePos.y);
+            //console.log('x ' + mousePos.x);
+            //console.log('y ' + mousePos.y);
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
             var desiredVel = mousePos.subtract(curPos.x, curPos.y).multiply(0.2, 0.2);
             if (desiredVel.getMagnitude() > this.maxSpeed) {
@@ -448,8 +451,8 @@ var FlyingBlind;
         };
         Preloader.prototype.startMainMenu = function () {
             // this.game.state.start('MainMenu', true, false);
-            //this.game.state.start('MainLevel', true, false);
-            this.game.state.start('TutLevel', true, false);
+            this.game.state.start('MainLevel', true, false);
+            //this.game.state.start('TutLevel', true, false);
         };
         return Preloader;
     })(Phaser.State);
@@ -461,6 +464,9 @@ var FlyingBlind;
         __extends(MainLevel, _super);
         function MainLevel() {
             _super.apply(this, arguments);
+            this.prevSpawnTime = 0;
+            this.nextSpawnTime = 3000;
+            this.interval = 15000;
         }
         MainLevel.prototype.create = function () {
             this.background = this.game.make.sprite(0, 0, 'background');
@@ -472,8 +478,52 @@ var FlyingBlind;
             this.addRunway(307, 288, 0, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
             this.addRunway(307, 374, 0, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
             _super.prototype.create.call(this);
-            this.addGuidable(50, 50, 0xeeeeee, false);
+            this.addGuidable(50, 50, 0xffffff, false);
             this.addGuidable(100, 50, 0xffffff, true);
+        };
+        MainLevel.prototype.update = function () {
+            _super.prototype.update.call(this);
+            this.spawner();
+        };
+        MainLevel.prototype.spawner = function () {
+            if (this.prevSpawnTime + this.nextSpawnTime < this.game.time.time) {
+                this.prevSpawnTime = this.game.time.time;
+                this.nextSpawnTime = this.interval;
+                this.interval *= 0.96;
+            }
+            else {
+                return;
+            }
+            var rng = Math.random();
+            var heli = false; //isHeli
+            if (rng > 0.75) {
+                heli = true;
+            }
+            rng = Math.random();
+            var x;
+            var y;
+            var rng2 = Math.random();
+            if (rng < 0.20) {
+                x = -50;
+                y = rng2 * this.game.height;
+            }
+            else if (rng < 0.5) {
+                y = this.game.height + 50;
+                x = rng2 * this.game.width;
+            }
+            else if (rng < 0.8) {
+                y = -50;
+                x = rng2 * this.game.width;
+            }
+            else {
+                x = this.game.width + 50;
+                y = rng2 * this.game.height;
+            }
+            var direction = new Phaser.Point();
+            direction.x = this.game.width * 0.5 + Math.random() * 800 - 400;
+            direction.y = this.game.height * 0.5 + Math.random() * 550 - 225;
+            var sprite = this.addGuidable(x, y, 0xffffff, heli);
+            sprite.velocity = direction;
         };
         return MainLevel;
     })(FlyingBlind.GameLevel);

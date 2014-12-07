@@ -43,8 +43,8 @@
         startMainMenu() {
 
            // this.game.state.start('MainMenu', true, false);
-            //this.game.state.start('MainLevel', true, false);
-            this.game.state.start('TutLevel', true, false);
+            this.game.state.start('MainLevel', true, false);
+            //this.game.state.start('TutLevel', true, false);
         }
 
     }
