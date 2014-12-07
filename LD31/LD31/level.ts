@@ -3,7 +3,6 @@
 
         //background: Phaser.Sprite;
         windowSprite: Phaser.Sprite;
-        logo: Phaser.Sprite;
 
         renderer: MemoryRenderer;
 
@@ -16,15 +15,20 @@
             this.gameObjects.sort((a, b) => a.z - b.z);
         }
 
+        
+
 
         create() {
             this.gameObjects = [];
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
 
-            this.logo = this.game.add.sprite(10, 10, 'logo');
+            
             //this.background = this.game.make.sprite(0, 0, 'cat_eyes');
-           
+            var runway = this.game.make.sprite(0, 0, 'runway');
+            var col = 
+            runway.tint = GoldenColorGenerator.generateColor32bitEncoded();
+            this.addToGame(runway);
 
             this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
 
@@ -36,6 +40,7 @@
 
            // this.renderer.add(this.background);
             var color = GoldenColorGenerator.generateColor();
+            
             this.addToGame(new Guidable(this.game, 50, 50, 'ship2', this.RGBtoHEX(color[0], color[1], color[2])));
 
             //this.game.input.ad
@@ -44,6 +49,9 @@
 
             this.windowSprite = this.game.add.sprite(0, 0, 'window');
             this.windowSprite.anchor.set(0.5, 0.5);
+
+            
+
         }
 
         handleMouseDown = () => {

@@ -32,15 +32,15 @@ var Blindfire;
         GoldenColorGenerator.generateColor = function () {
             this.h += this.golden_ratio_conjugate;
             this.h %= 1;
-            return hsvToRgb(this.h * 360, 100, 0.95 * 100);
+            return hsvToRgb(this.h * 360, 100, 0.98 * 100);
         };
         GoldenColorGenerator.generateColor32bitEncoded = function () {
-            var col = this.generateColor;
+            var col = this.generateColor();
             return col[0] << 16 | col[1] << 8 | col[2];
         };
         //Generate (next) random color given golden ratio conjugate
         GoldenColorGenerator.golden_ratio_conjugate = 0.618033988749895;
-        GoldenColorGenerator.h = 0.3;
+        GoldenColorGenerator.h = 0.82;
         return GoldenColorGenerator;
     })();
     Blindfire.GoldenColorGenerator = GoldenColorGenerator;
@@ -216,8 +216,10 @@ var Blindfire;
             this.gameObjects = [];
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.logo = this.game.add.sprite(10, 10, 'logo');
             //this.background = this.game.make.sprite(0, 0, 'cat_eyes');
+            var runway = this.game.make.sprite(0, 0, 'runway');
+            var col = runway.tint = Blindfire.GoldenColorGenerator.generateColor32bitEncoded();
+            this.addToGame(runway);
             this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
             this.renderer = new Blindfire.MemoryRenderer(game, this.maskRect);
             //this.addToGame(this.background);
@@ -324,13 +326,14 @@ var Blindfire;
             this.preloadBar = this.add.sprite(200, 250, 'preloadBar');
             this.load.setPreloadSprite(this.preloadBar);
             //  Load our actual games assets
-            this.load.image('logo', 'assets/logo.png');
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('cat_eyes', 'assets/cat_eyes.jpg');
             this.load.image('block', 'assets/block.png');
             this.load.image('ship1', 'assets/ship1.png');
             this.load.image('ship2', 'assets/ship2.png');
             this.load.image('window', 'assets/window.png');
+            this.load.image('runway', 'assets/runway.png');
+            this.load.image('helipad', 'assets/helipad.png');
         };
         Preloader.prototype.create = function () {
             //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -374,13 +377,13 @@ var Blindfire;
             this.frame++;
             this.gameBmd.clear();
             drawList.forEach(function (val) {
+                _this.gameBmd.blendReset();
                 _this.gameBmd.draw(val, val.x, val.y);
                 if (val.navNodes) {
                     _this.gameBmd.blendAdd();
                     _this.drawNavLines(val);
                 }
             });
-            //this.drawNavLines(null);
             this.watchWindowBitmap = this.watchWindowBitmap.alphaMask(this.gameBmd, this.mask, null, this.maskRect);
             //  if (this.frame % 1 == 0) {
             this.bmd.blendSaturation();

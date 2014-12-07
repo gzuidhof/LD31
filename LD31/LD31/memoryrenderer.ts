@@ -61,13 +61,13 @@
             this.gameBmd.clear();
             
             drawList.forEach((val) => {
+                this.gameBmd.blendReset();
                 this.gameBmd.draw(val, val.x, val.y);
                 if (val.navNodes) {
                     this.gameBmd.blendAdd();
                     this.drawNavLines(val);
                 }
             });
-            //this.drawNavLines(null);
 
             this.watchWindowBitmap = this.watchWindowBitmap.alphaMask(this.gameBmd, this.mask, null, this.maskRect);
 

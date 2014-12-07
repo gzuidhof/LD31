@@ -2,17 +2,17 @@
     export class GoldenColorGenerator {
         //Generate (next) random color given golden ratio conjugate
         private static golden_ratio_conjugate = 0.618033988749895;
-        private static h = 0.3
+        private static h = 0.82
 
 
         static generateColor() {
             this.h += this.golden_ratio_conjugate;
             this.h %= 1;
-            return hsvToRgb(this.h*360, 100, 0.95*100);
+            return hsvToRgb(this.h*360, 100, 0.98*100);
         }
 
         static generateColor32bitEncoded(): number {
-            var col = this.generateColor;
+            var col = this.generateColor();
             return col[0] << 16 | col[1] << 8 | col[2];
         }
 
