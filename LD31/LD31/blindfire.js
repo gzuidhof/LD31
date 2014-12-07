@@ -149,12 +149,31 @@ var Blindfire;
             if (this.navNodes.length == 0) {
             }
             else {
-                this.rotation = this.game.physics.arcade.moveToXY(this, this.navNodes[0].x, this.navNodes[0].y, this.speed * 300, 10);
                 var vel = this.navNodes[0].clone().subtract(this.position.x, this.position.y);
-                vel.setMagnitude(this.speed);
                 this.velocity = vel;
             }
+            if (this.x + this.hitboxRadius > this.game.width) {
+                this.navNodes = [];
+                this.velocity.x = -Math.abs(this.velocity.y);
+            }
+            else if (this.x - this.hitboxRadius < 0) {
+                this.navNodes = [];
+                this.velocity.x = Math.abs(this.velocity.x);
+            }
+            if (this.y + this.hitboxRadius > this.game.height) {
+                this.navNodes = [];
+                this.velocity.y = -Math.abs(this.velocity.y);
+            }
+            else if (this.y - this.hitboxRadius < 0) {
+                this.navNodes = [];
+                this.velocity.y = Math.abs(this.velocity.y);
+            }
+            this.updateRotation();
+            this.velocity.setMagnitude(this.speed);
             this.position = this.position.add(this.velocity.x, this.velocity.y);
+        };
+        Guidable.prototype.updateRotation = function () {
+            this.rotation = this.game.physics.arcade.moveToXY(this, this.x + this.velocity.x, this.y + this.velocity.y, this.speed, 10);
         };
         return Guidable;
     })(Phaser.Sprite);
@@ -198,10 +217,10 @@ var Blindfire;
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.logo = this.game.add.sprite(10, 10, 'logo');
-            this.background = this.game.make.sprite(0, 0, 'cat_eyes');
+            //this.background = this.game.make.sprite(0, 0, 'cat_eyes');
             this.maskRect = new Phaser.Rectangle(0, 0, 326, 220);
             this.renderer = new Blindfire.MemoryRenderer(game, this.maskRect);
-            this.addToGame(this.background);
+            //this.addToGame(this.background);
             this.renderer.drawAllNoMask(this.gameObjects);
             // this.renderer.add(this.background);
             var color = Blindfire.GoldenColorGenerator.generateColor();
@@ -357,6 +376,7 @@ var Blindfire;
             drawList.forEach(function (val) {
                 _this.gameBmd.draw(val, val.x, val.y);
                 if (val.navNodes) {
+                    _this.gameBmd.blendAdd();
                     _this.drawNavLines(val);
                 }
             });
@@ -367,11 +387,11 @@ var Blindfire;
             this.bmd.fill(0, 0, 0, 0.03);
             this.bmd.blendReset();
             // }
-            // if (this.frame % 120 == 0) {
-            //    this.bmd.blendOverlay();
-            //    this.bmd.fill(0.1, 0.1, 0.1, 0.003);
-            //    this.bmd.blendReset();
-            //}
+            if (this.frame % 20 == 0) {
+                this.bmd.blendOverlay();
+                this.bmd.fill(0.1, 0.1, 0.1, 0.003);
+                this.bmd.blendReset();
+            }
             this.bmd.draw(this.watchWindowBitmap);
         };
         MemoryRenderer.prototype.drawAllNoMask = function (drawList) {
@@ -388,9 +408,9 @@ var Blindfire;
                 return;
             }
             var graph = this.game.make.graphics(0, 0);
-            graph.lineStyle(2, guidable.color, 1);
+            graph.lineStyle(3, guidable.color, 0.8);
             graph.moveTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
-            for (var i = 1; i < guidable.navNodes.length; i++) {
+            for (var i = 0; i < guidable.navNodes.length; i++) {
                 graph.lineTo(guidable.navNodes[i].x, guidable.navNodes[i].y);
             }
             var topleft = this.calcTopLeft(guidable.navNodes);

@@ -16,6 +16,7 @@
             this.anchor.setTo(0.5, 0.5);
             this.scale.set(0.75, 0.75);
 
+            
 
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.navNodes = [];
@@ -35,7 +36,7 @@
 
         
         update() {
-
+            
             if (this.drawing) {
                 this.navNodes.push(this.game.input.activePointer.position.clone());
             }
@@ -50,18 +51,48 @@
                // this.velocity = new Phaser.Point(0,0);
             }
             else {
+
                 
-                this.rotation = this.game.physics.arcade.moveToXY(this, this.navNodes[0].x, this.navNodes[0].y, this.speed * 300, 10);
                 var vel: Phaser.Point = this.navNodes[0].clone().subtract(this.position.x, this.position.y);
-                vel.setMagnitude(this.speed);
+                
 
                 this.velocity = vel;
             }
+
+            
+
+            if (this.x + this.hitboxRadius > this.game.width) {
+                this.navNodes = [];
+                this.velocity.x = -Math.abs(this.velocity.y);
+            }
+            else if (this.x - this.hitboxRadius < 0 ) {
+                this.navNodes = [];
+                this.velocity.x = Math.abs(this.velocity.x);
+            }
+
+            if (this.y + this.hitboxRadius> this.game.height) {
+                this.navNodes = [];
+                this.velocity.y = -Math.abs(this.velocity.y);
+            }
+            else if (this.y - this.hitboxRadius< 0) {
+                this.navNodes = [];
+                this.velocity.y = Math.abs(this.velocity.y);
+            }
+
+            this.updateRotation();
+
+            this.velocity.setMagnitude(this.speed);
             this.position = this.position.add(this.velocity.x, this.velocity.y);
+
+
+
+
 
         }
 
-
+        updateRotation() {
+            this.rotation = this.game.physics.arcade.moveToXY(this, this.x + this.velocity.x, this.y + this.velocity.y, this.speed, 10);
+        }
 
     }
 

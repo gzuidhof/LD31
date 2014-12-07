@@ -63,6 +63,7 @@
             drawList.forEach((val) => {
                 this.gameBmd.draw(val, val.x, val.y);
                 if (val.navNodes) {
+                    this.gameBmd.blendAdd();
                     this.drawNavLines(val);
                 }
             });
@@ -76,13 +77,13 @@
                 this.bmd.fill(0, 0, 0, 0.03);
                 this.bmd.blendReset();
            // }
-           // if (this.frame % 120 == 0) {
-            //    this.bmd.blendOverlay();
-            //    this.bmd.fill(0.1, 0.1, 0.1, 0.003);
+            if (this.frame % 20 == 0) {
+                this.bmd.blendOverlay();
+                this.bmd.fill(0.1, 0.1, 0.1, 0.003);
 
-            //    this.bmd.blendReset();
+                this.bmd.blendReset();
 
-            //}
+            }
 
             this.bmd.draw(this.watchWindowBitmap);
         }
@@ -108,12 +109,14 @@
 
             var graph = this.game.make.graphics(0, 0);
 
-            graph.lineStyle(2, guidable.color, 1);
+            graph.lineStyle(3, guidable.color, 0.8);
             
             graph.moveTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
             //graph.lineTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
-            for (var i = 1; i < guidable.navNodes.length; i++) {
+            for (var i = 0; i < guidable.navNodes.length; i++) {
                 graph.lineTo(guidable.navNodes[i].x, guidable.navNodes[i].y );
+               // graph.drawRect(guidable.navNodes[i].x - 2, guidable.navNodes[i].y - 2, 4, 4);
+               // graph.drawCircle(guidable.navNodes[i].x, guidable.navNodes[i].y, 2);
             }
 
             var topleft = this.calcTopLeft(guidable.navNodes);
