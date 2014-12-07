@@ -21,6 +21,7 @@
             this.load.image('runway', 'assets/runway.png');
             this.load.image('helipad', 'assets/helipad.png');
             this.load.image('landicon', 'assets/landicon.png');
+            this.load.image('circle', 'assets/circle.png');
             this.load.image('heli', 'assets/heli.png');
 
             this.load.image('heli0', 'assets/heli0.png');

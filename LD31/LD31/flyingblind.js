@@ -122,7 +122,7 @@ var FlyingBlind;
             var _this = this;
             _super.call(this, game, x, y, key);
             this.hitboxRadius = 20;
-            this.speed = 0.9;
+            this.speed = 0.6;
             this.drawing = false;
             this.velocity = new Phaser.Point(0, 0);
             this.landing = false;
@@ -165,7 +165,7 @@ var FlyingBlind;
         };
         Guidable.prototype.update = function () {
             this.i++;
-            if (this.heli && this.i % 2 == 0) {
+            if (this.heli && this.i % 3 == 0) {
                 this.frameM++;
                 if (this.frameM > 5) {
                     this.frameM = 0;
@@ -174,13 +174,13 @@ var FlyingBlind;
             }
             if (this.landing) {
                 //  this.speed = 1;
-                this.speed -= 0.08 * (this.game.time.elapsed / 1000);
+                this.speed -= 0.055 * (this.game.time.elapsed / 1000);
                 if (this.scale.getMagnitude() > 0.64) {
                     this.scale.x -= 0.10 * (this.game.time.elapsed / 1000);
                     this.scale.y -= 0.10 * (this.game.time.elapsed / 1000);
                 }
-                if (this.speed < 0.05) {
-                    console.log("cleaning up plane");
+                if (this.speed < 0.05 || (this.speed < 0.35 && this.heli)) {
+                    console.log("cleaning up guidable");
                     this.landCallback(this);
                 }
                 this.navNodes = [];
@@ -196,7 +196,7 @@ var FlyingBlind;
                     this.navNodes.push(this.game.input.activePointer.position.clone());
                 }
             }
-            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 5) {
+            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 2.5) {
                 this.navNodes.shift();
             }
             if (this.navNodes.length == 0) {
@@ -310,6 +310,22 @@ var FlyingBlind;
                     }
                 }
             }
+        };
+        GameLevel.prototype.spawn = function (x, y, color, direction, heli) {
+            var _this = this;
+            var sprite = this.addGuidable(x, y, 0xffffff, heli);
+            sprite.velocity = direction;
+            x = Phaser.Math.clamp(x, 0, this.game.width);
+            y = Phaser.Math.clamp(y, 0, this.game.height);
+            var indication = this.game.add.sprite(x, y, 'circle');
+            indication.anchor.set(0.5, 0.5);
+            indication.scale.set(0.3, 0.3);
+            indication.tint = FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded();
+            this.game.add.tween(indication.scale).to({ x: 1.2, y: 1.2 }, 4000, Phaser.Easing.Back.Out, true, 0);
+            var t = this.game.add.tween(indication).to({ alpha: 0.05 }, 6000, Phaser.Easing.Circular.Out, true, 3000);
+            t.onComplete.add(function () {
+                _this.game.world.remove(indication);
+            });
         };
         GameLevel.prototype.onCollision = function (planeA, planeB) {
             console.log('Collision!');
@@ -436,6 +452,7 @@ var FlyingBlind;
             this.load.image('runway', 'assets/runway.png');
             this.load.image('helipad', 'assets/helipad.png');
             this.load.image('landicon', 'assets/landicon.png');
+            this.load.image('circle', 'assets/circle.png');
             this.load.image('heli', 'assets/heli.png');
             this.load.image('heli0', 'assets/heli0.png');
             this.load.image('heli1', 'assets/heli1.png');
@@ -466,7 +483,7 @@ var FlyingBlind;
             _super.apply(this, arguments);
             this.prevSpawnTime = 0;
             this.nextSpawnTime = 3000;
-            this.interval = 15000;
+            this.interval = 15500;
         }
         MainLevel.prototype.create = function () {
             this.background = this.game.make.sprite(0, 0, 'background');
@@ -504,26 +521,27 @@ var FlyingBlind;
             var y;
             var rng2 = Math.random();
             if (rng < 0.20) {
-                x = -50;
+                x = -70;
                 y = rng2 * this.game.height;
             }
             else if (rng < 0.5) {
-                y = this.game.height + 50;
+                y = this.game.height + 70;
                 x = rng2 * this.game.width;
             }
             else if (rng < 0.8) {
-                y = -50;
+                y = -70;
                 x = rng2 * this.game.width;
             }
             else {
-                x = this.game.width + 50;
+                x = this.game.width + 70;
                 y = rng2 * this.game.height;
             }
             var direction = new Phaser.Point();
-            direction.x = this.game.width * 0.5 + Math.random() * 800 - 400;
-            direction.y = this.game.height * 0.5 + Math.random() * 550 - 225;
-            var sprite = this.addGuidable(x, y, 0xffffff, heli);
-            sprite.velocity = direction;
+            direction.x = Math.random();
+            direction.y = Math.random();
+            //direction.x = this.game.width * 0.5 + Math.random() * 800 - 400 - x;
+            //direction.y = this.game.height * 0.5 + Math.random() * 550 - 225 - y;
+            this.spawn(x, y, 0xffffff, direction, heli);
         };
         return MainLevel;
     })(FlyingBlind.GameLevel);
@@ -633,12 +651,12 @@ var FlyingBlind;
             this.heli = heli;
             this.color = color;
             this.tint = color;
-            //this.alpha = 0;
+            this.alpha = 0;
             this.rotation = this.game.physics.arcade.angleToXY(this, this.x + this.direction.x, this.y + this.direction.y);
             this.scale = new Phaser.Point(0.2, 0.2);
         }
         Runway.prototype.checkLanded = function (plane) {
-            if (plane.heli == this.heli && this.position.distance(plane.position) < (this.heli ? 26.5 : 19)) {
+            if (plane.heli == this.heli && this.position.distance(plane.position) < (this.heli ? 35.5 : 19)) {
                 if (plane.heli || Math.abs(this.angleBetween(plane.velocity, this.direction)) < 0.6) {
                     //console.log('angle' + this.angleBetween(plane.velocity, this.direction) + ' dirX ' + plane.velocity.x + ' dirY ' + plane.velocity.y);
                     return true;

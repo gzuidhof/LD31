@@ -67,6 +67,26 @@
 
         }
 
+
+        spawn(x, y, color, direction, heli) {
+            var sprite = this.addGuidable(x, y, 0xffffff, heli);
+            sprite.velocity = direction;
+
+            x = Phaser.Math.clamp(x, 0, this.game.width);
+            y = Phaser.Math.clamp(y, 0, this.game.height)
+
+            var indication = this.game.add.sprite(x, y, 'circle');
+            indication.anchor.set(0.5, 0.5);
+            indication.scale.set(0.3, 0.3);
+            indication.tint = GoldenColorGenerator.generateColor32bitEncoded();
+            this.game.add.tween(indication.scale).to({ x: 1.2, y: 1.2 }, 4000, Phaser.Easing.Back.Out, true, 0);
+            var t = this.game.add.tween(indication).to({ alpha: 0.05 }, 6000, Phaser.Easing.Circular.Out, true, 3000);
+            t.onComplete.add(() => {
+                this.game.world.remove(indication);
+            });
+        }
+
+
         onCollision(planeA, planeB) {
             console.log('Collision!');
         }

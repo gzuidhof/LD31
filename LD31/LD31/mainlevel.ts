@@ -31,7 +31,7 @@
 
         prevSpawnTime: number = 0;
         nextSpawnTime: number = 3000;
-        interval: number = 15000;
+        interval: number = 15500;
 
         spawner() {
 
@@ -60,31 +60,30 @@
             var rng2 = Math.random();
 
             if (rng < 0.20) {
-                x = -50;
+                x = -70;
                 y = rng2 * this.game.height;
             }
             else if (rng < 0.5) {
-                y = this.game.height + 50;
+                y = this.game.height + 70;
                 x = rng2 * this.game.width;
 
             }
             else if (rng < 0.8) {
-                y = -50;
+                y = -70;
                 x = rng2 * this.game.width;
             }
             else {
-                x = this.game.width + 50;
+                x = this.game.width + 70;
                 y = rng2 * this.game.height;
             }
 
             var direction = new Phaser.Point();
-            direction.x = this.game.width * 0.5 + Math.random() * 800 - 400;
-            direction.y = this.game.height * 0.5 + Math.random() * 550 - 225;
+            direction.x = Math.random();
+            direction.y = Math.random();
+            //direction.x = this.game.width * 0.5 + Math.random() * 800 - 400 - x;
+            //direction.y = this.game.height * 0.5 + Math.random() * 550 - 225 - y;
 
-            
-            var sprite = this.addGuidable(x, y, 0xffffff, heli);
-            sprite.velocity = direction;
-
+            this.spawn(x, y, 0xffffff, direction, heli);
         }
 
 

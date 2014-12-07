@@ -4,7 +4,7 @@
         navNodes: Phaser.Point[];
         hitboxRadius = 20;
 
-        speed = 0.9;
+        speed = 0.6;
         drawing: boolean = false;
         velocity = new Phaser.Point(0, 0);
         color: number;
@@ -67,7 +67,7 @@
 
         update() {
             this.i++;
-            if (this.heli && this.i % 2 == 0) {
+            if (this.heli && this.i % 3 == 0) {
                 
                 this.frameM++;
                 if (this.frameM > 5) {
@@ -79,14 +79,14 @@
 
             if (this.landing) {
               //  this.speed = 1;
-                this.speed -= 0.08 * (this.game.time.elapsed / 1000);
+                this.speed -= 0.055 * (this.game.time.elapsed / 1000);
                 if (this.scale.getMagnitude() > 0.64) {
                     this.scale.x -= 0.10 * (this.game.time.elapsed / 1000);
                     this.scale.y -= 0.10 * (this.game.time.elapsed / 1000);
                 }
 
-                if (this.speed < 0.05) {
-                    console.log("cleaning up plane");
+                if (this.speed < 0.05 || (this.speed < 0.35 && this.heli)) {
+                    console.log("cleaning up guidable");
                     this.landCallback(this);
                 }
                 
@@ -108,7 +108,7 @@
             }
 
             
-            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 5) {
+            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 2.5) {
                 this.navNodes.shift();
             }
 
