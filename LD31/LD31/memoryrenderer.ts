@@ -72,10 +72,10 @@
             this.watchWindowBitmap = this.watchWindowBitmap.alphaMask(this.gameBmd, this.mask, null, this.maskRect);
 
 
-          //  if (this.frame % 1 == 0) {
+            if (this.frame % 3 == 0) {
                 this.bmd.blendSaturation();
                 this.bmd.fill(0, 0, 0, 0.03);
-           // }
+            }
             //if (this.frame % 20 == 0) {
             //    this.bmd.blendOverlay();
             //    this.bmd.fill(0.1, 0.1, 0.1, 0.003);
@@ -107,14 +107,14 @@
 
             var graph = this.game.make.graphics(0, 0);
 
-            graph.lineStyle(3, guidable.color, 0.8);
+            graph.lineStyle(8, 0xffffff, 0.4);
             
             graph.moveTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
             //graph.lineTo(guidable.navNodes[0].x, guidable.navNodes[0].y);
             for (var i = 0; i < guidable.navNodes.length; i++) {
-                graph.lineTo(guidable.navNodes[i].x, guidable.navNodes[i].y );
+               // graph.lineTo(guidable.navNodes[i].x, guidable.navNodes[i].y );
                // graph.drawRect(guidable.navNodes[i].x - 2, guidable.navNodes[i].y - 2, 4, 4);
-               // graph.drawCircle(guidable.navNodes[i].x, guidable.navNodes[i].y, 2);
+                graph.drawCircle(guidable.navNodes[i].x, guidable.navNodes[i].y, 2);
             }
 
             var topleft = this.calcTopLeft(guidable.navNodes);

@@ -38,11 +38,18 @@
         update() {
             
             if (this.drawing) {
-                this.navNodes.push(this.game.input.activePointer.position.clone());
+                if (this.navNodes.length > 0) {
+                    if (this.navNodes[this.navNodes.length - 1].distance(this.game.input.activePointer.position) > 15) {
+                        this.navNodes.push(this.game.input.activePointer.position.clone());
+                    }
+                }
+                else {
+                    this.navNodes.push(this.game.input.activePointer.position.clone());
+                }
             }
 
             
-            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 15) {
+            while (this.navNodes.length > 0 && this.position.distance(this.navNodes[0]) < 22) {
                 this.navNodes.shift();
             }
 

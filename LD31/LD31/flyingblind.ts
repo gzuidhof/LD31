@@ -12,7 +12,7 @@
             // this.state.add('Level1', Level1, false);
             this.state.add('Level', Level, false);
 
-
+            console.log("go");
             this.state.start('Boot');
         }
     }
