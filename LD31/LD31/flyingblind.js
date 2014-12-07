@@ -236,7 +236,6 @@ var FlyingBlind;
             this.guidables.forEach(function (plane) {
                 _this.runways.forEach(function (runway) {
                     if (runway.checkLanded(plane)) {
-                        console.log("LANDED!");
                     }
                 });
             });
@@ -255,6 +254,8 @@ var FlyingBlind;
         };
         GameLevel.prototype.update = function () {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
+            // console.log('x' + mousePos.x);
+            // console.log('y' + mousePos.y);
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
             var desiredVel = mousePos.subtract(curPos.x, curPos.y).multiply(0.2, 0.2);
             if (desiredVel.getMagnitude() > this.maxSpeed) {
@@ -352,6 +353,7 @@ var FlyingBlind;
             this.load.image('window', 'assets/window.png');
             this.load.image('runway', 'assets/runway.png');
             this.load.image('helipad', 'assets/helipad.png');
+            this.load.image('landicon', 'assets/landicon.png');
         };
         Preloader.prototype.create = function () {
             //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -376,7 +378,11 @@ var FlyingBlind;
         MainLevel.prototype.create = function () {
             this.background = this.game.make.sprite(0, 0, 'background');
             this.addToGame(this.background);
-            this.addRunway(100, 100, 1, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(296, 195, 1, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(390, 100, 1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(821, 279, -1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(392, 613, 1, -1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
+            //392 613
             _super.prototype.create.call(this);
             this.addGuidable(50, 50, 'ship2', 0xffffff);
             this.addGuidable(100, 50, 'ship2', 0xffffff);
@@ -486,13 +492,23 @@ var FlyingBlind;
             _super.call(this, game, x, y, 'landicon');
             this.direction = new Phaser.Point(dx, dy);
             this.anchor.set(0.5, 0.5);
+            this.rotation = this.game.physics.arcade.angleToXY(this, this.x + this.direction.x, this.y + this.direction.y);
+            this.scale = new Phaser.Point(0.2, 0.2);
         }
         Runway.prototype.checkLanded = function (plane) {
             if (this.position.distance(plane.position) < 18.5) {
-                //console.log(plane.velocity.angle(this.direction, true));
-                return Math.abs(plane.velocity.angle(this.direction, true)) > 75;
+                if (Math.abs(this.angleBetween(plane.velocity, this.direction)) < 0.6) {
+                    console.log('angle' + this.angleBetween(plane.velocity, this.direction) + ' dirX ' + plane.velocity.x + ' dirY ' + plane.velocity.y);
+                    return true;
+                }
             }
             return false;
+        };
+        Runway.prototype.angleBetween = function (a, b) {
+            var dotProd = a.dot(b);
+            var lenProd = a.getMagnitude() * b.getMagnitude();
+            var divOperation = dotProd / lenProd;
+            return Math.acos(divOperation);
         };
         return Runway;
     })(Phaser.Sprite);

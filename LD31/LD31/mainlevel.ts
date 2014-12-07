@@ -5,8 +5,12 @@
             this.background = this.game.make.sprite(0, 0, 'background');
             this.addToGame(this.background);
 
-            this.addRunway(100, 100, 1, 0, 'runway', GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(296, 195, 1, 0, 'runway', GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(390, 100, 1, 1, 'runway', GoldenColorGenerator.generateColor32bitEncoded());
 
+            this.addRunway(821, 279, -1, 1, 'runway', GoldenColorGenerator.generateColor32bitEncoded());
+            this.addRunway(392, 613, 1, -1, 'runway', GoldenColorGenerator.generateColor32bitEncoded());
+            //392 613
 
             super.create();
 

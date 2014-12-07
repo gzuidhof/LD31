@@ -34,7 +34,7 @@
 
                 this.runways.forEach((runway) => {
                     if (runway.checkLanded(plane)) {
-                        console.log("LANDED!");
+                        //console.log("LANDED!");
                     }
 
                 });
@@ -89,7 +89,10 @@
         
 
         update() {
-            var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
+            var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y)
+           // console.log('x' + mousePos.x);
+           // console.log('y' + mousePos.y);
+
             var curPos = new Phaser.Point(this.maskRect.centerX, this.maskRect.centerY);
 
             var desiredVel = mousePos.subtract(curPos.x, curPos.y).multiply(0.2, 0.2);
@@ -111,8 +114,8 @@
 
             this.renderer.update(this.gameObjects);
 
-            
 
+           
             
 
         }

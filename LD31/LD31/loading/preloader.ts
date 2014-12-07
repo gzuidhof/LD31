@@ -19,6 +19,7 @@
             this.load.image('window', 'assets/window.png');
             this.load.image('runway', 'assets/runway.png');
             this.load.image('helipad', 'assets/helipad.png');
+            this.load.image('landicon', 'assets/landicon.png');
             
 
         }
