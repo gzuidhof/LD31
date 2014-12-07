@@ -12,6 +12,28 @@
 
         maskRect: Phaser.Rectangle;
 
+        explosionSound: Phaser.Sound;
+
+        create() {
+            var game = this.game;
+            game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
+            this.renderer = new MemoryRenderer(game, this.maskRect);
+            this.explosionSound = game.add.audio('explosion', 0.7);
+
+            this.renderer.drawAllNoMask(this.gameObjects);
+
+            //this.game.input.ad
+            this.game.input.onDown.add(this.handleMouseDown);
+            this.game.input.onUp.add(this.handleMouseUp);
+
+            this.windowSprite = this.game.add.sprite(0, 0, 'window');
+            this.windowSprite.anchor.set(0.5, 0.5);
+
+        }
+
+
+
         addToGame(e: Phaser.Sprite) {
             this.gameObjects.push(e);
             this.gameObjects.sort((a, b) => a.z - b.z);
@@ -87,8 +109,37 @@
         }
 
 
-        onCollision(planeA, planeB) {
+        onCollision(planeA: Guidable, planeB: Guidable) {
             console.log('Collision!');
+            this.explosionSound.play();
+            planeA.tint = 0x333333;
+            planeB.tint = 0x222222;
+            
+            planeA.startLanding(planeA.velocity, this.onExplosionFinish);
+            planeB.startLanding(planeB.velocity, this.onExplosionFinish);
+
+            var indication = this.game.add.sprite((planeA.position.x + planeB.position.x) / 2, (planeA.position.y + planeB.position.y) / 2, 'explosionicon');
+            indication.alpha = 0.75;
+            indication.scale.set(0.7,0.7);
+            indication.anchor.set(0.5, 0.5);
+            this.game.add.tween(indication.scale).to({ x: 0.2, y: 0.2 }, 8000, Phaser.Easing.Sinusoidal.In, true, 1000);
+            var t = this.game.add.tween(indication).to({ alpha: 0.05 }, 12000, Phaser.Easing.Circular.Out, true, 4000);
+            t.onComplete.add(() => {
+                this.game.world.remove(indication);
+            });
+        }
+
+        onExplosionFinish = (guidable: Guidable) => {
+            if (guidable.heli) {
+                setInterval(() => {
+                    this.removeFromList(guidable, this.guidables);
+                    this.removeFromList(guidable, this.gameObjects);
+                }, 3800);
+            }
+            else {
+                this.removeFromList(guidable, this.guidables);
+                this.removeFromList(guidable, this.gameObjects);
+            }
         }
 
         onLandingFinished = (guidable: Guidable) => {
@@ -105,26 +156,6 @@
             if (index > -1) {
                 l.splice(index, 1);
             }
-        }
-
-
-
-        create() {
-            var game = this.game;
-            game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
-            this.renderer = new MemoryRenderer(game, this.maskRect);
-            
-
-            this.renderer.drawAllNoMask(this.gameObjects);
-
-            //this.game.input.ad
-            this.game.input.onDown.add(this.handleMouseDown);
-            this.game.input.onUp.add(this.handleMouseUp);
-
-            this.windowSprite = this.game.add.sprite(0, 0, 'window');
-            this.windowSprite.anchor.set(0.5, 0.5);
-
         }
 
         handleMouseDown = () => {

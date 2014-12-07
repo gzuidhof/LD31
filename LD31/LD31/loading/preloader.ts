@@ -23,6 +23,7 @@
             this.load.image('landicon', 'assets/landicon.png');
             this.load.image('circle', 'assets/circle.png');
             this.load.image('heli', 'assets/heli.png');
+            this.load.image('explosionicon', 'assets/explosionicon.png');
 
             this.load.image('heli0', 'assets/heli0.png');
             this.load.image('heli1', 'assets/heli1.png');
@@ -30,7 +31,8 @@
             this.load.image('heli3', 'assets/heli3.png');
             this.load.image('heli4', 'assets/heli4.png');
             this.load.image('heli5', 'assets/heli5.png');
-            
+
+            this.load.audio('explosion', 'assets/explosion.wav', true);
 
         }
 

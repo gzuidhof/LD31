@@ -247,6 +247,18 @@ var FlyingBlind;
             this.gameObjects = [];
             this.guidables = [];
             this.runways = [];
+            this.onExplosionFinish = function (guidable) {
+                if (guidable.heli) {
+                    setInterval(function () {
+                        _this.removeFromList(guidable, _this.guidables);
+                        _this.removeFromList(guidable, _this.gameObjects);
+                    }, 3800);
+                }
+                else {
+                    _this.removeFromList(guidable, _this.guidables);
+                    _this.removeFromList(guidable, _this.gameObjects);
+                }
+            };
             this.onLandingFinished = function (guidable) {
                 //Todo points!
                 _this.removeFromList(guidable, _this.guidables);
@@ -272,6 +284,19 @@ var FlyingBlind;
             this.velocity = new Phaser.Point(0, 0);
             this.snapiness = 0.008;
         }
+        GameLevel.prototype.create = function () {
+            var game = this.game;
+            game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
+            this.renderer = new FlyingBlind.MemoryRenderer(game, this.maskRect);
+            this.explosionSound = game.add.audio('explosion', 0.7);
+            this.renderer.drawAllNoMask(this.gameObjects);
+            //this.game.input.ad
+            this.game.input.onDown.add(this.handleMouseDown);
+            this.game.input.onUp.add(this.handleMouseUp);
+            this.windowSprite = this.game.add.sprite(0, 0, 'window');
+            this.windowSprite.anchor.set(0.5, 0.5);
+        };
         GameLevel.prototype.addToGame = function (e) {
             this.gameObjects.push(e);
             this.gameObjects.sort(function (a, b) { return a.z - b.z; });
@@ -328,25 +353,28 @@ var FlyingBlind;
             });
         };
         GameLevel.prototype.onCollision = function (planeA, planeB) {
+            var _this = this;
             console.log('Collision!');
+            this.explosionSound.play();
+            planeA.tint = 0x333333;
+            planeB.tint = 0x222222;
+            planeA.startLanding(planeA.velocity, this.onExplosionFinish);
+            planeB.startLanding(planeB.velocity, this.onExplosionFinish);
+            var indication = this.game.add.sprite((planeA.position.x + planeB.position.x) / 2, (planeA.position.y + planeB.position.y) / 2, 'explosionicon');
+            indication.alpha = 0.75;
+            indication.scale.set(0.7, 0.7);
+            indication.anchor.set(0.5, 0.5);
+            this.game.add.tween(indication.scale).to({ x: 0.2, y: 0.2 }, 8000, Phaser.Easing.Sinusoidal.In, true, 1000);
+            var t = this.game.add.tween(indication).to({ alpha: 0.05 }, 12000, Phaser.Easing.Circular.Out, true, 4000);
+            t.onComplete.add(function () {
+                _this.game.world.remove(indication);
+            });
         };
         GameLevel.prototype.removeFromList = function (el, l) {
             var index = l.indexOf(el);
             if (index > -1) {
                 l.splice(index, 1);
             }
-        };
-        GameLevel.prototype.create = function () {
-            var game = this.game;
-            game.physics.startSystem(Phaser.Physics.ARCADE);
-            this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
-            this.renderer = new FlyingBlind.MemoryRenderer(game, this.maskRect);
-            this.renderer.drawAllNoMask(this.gameObjects);
-            //this.game.input.ad
-            this.game.input.onDown.add(this.handleMouseDown);
-            this.game.input.onUp.add(this.handleMouseUp);
-            this.windowSprite = this.game.add.sprite(0, 0, 'window');
-            this.windowSprite.anchor.set(0.5, 0.5);
         };
         GameLevel.prototype.update = function () {
             var mousePos = new Phaser.Point(this.game.input.x, this.game.input.y);
@@ -454,12 +482,14 @@ var FlyingBlind;
             this.load.image('landicon', 'assets/landicon.png');
             this.load.image('circle', 'assets/circle.png');
             this.load.image('heli', 'assets/heli.png');
+            this.load.image('explosionicon', 'assets/explosionicon.png');
             this.load.image('heli0', 'assets/heli0.png');
             this.load.image('heli1', 'assets/heli1.png');
             this.load.image('heli2', 'assets/heli2.png');
             this.load.image('heli3', 'assets/heli3.png');
             this.load.image('heli4', 'assets/heli4.png');
             this.load.image('heli5', 'assets/heli5.png');
+            this.load.audio('explosion', 'assets/explosion.wav', true);
         };
         Preloader.prototype.create = function () {
             //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -484,6 +514,7 @@ var FlyingBlind;
             this.prevSpawnTime = 0;
             this.nextSpawnTime = 3000;
             this.interval = 15500;
+            this.minSpawnTime = 1000;
         }
         MainLevel.prototype.create = function () {
             this.background = this.game.make.sprite(0, 0, 'background');
@@ -503,9 +534,8 @@ var FlyingBlind;
             this.spawner();
         };
         MainLevel.prototype.spawner = function () {
-            if (this.prevSpawnTime + this.nextSpawnTime < this.game.time.time) {
+            if (this.game.time.time - this.prevSpawnTime > this.interval && this.game.time.time - this.prevSpawnTime > this.minSpawnTime) {
                 this.prevSpawnTime = this.game.time.time;
-                this.nextSpawnTime = this.interval;
                 this.interval *= 0.96;
             }
             else {

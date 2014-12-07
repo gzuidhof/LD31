@@ -32,12 +32,12 @@
         prevSpawnTime: number = 0;
         nextSpawnTime: number = 3000;
         interval: number = 15500;
+        minSpawnTime = 1000;
 
         spawner() {
 
-            if (this.prevSpawnTime + this.nextSpawnTime < this.game.time.time) {
+            if (this.game.time.time - this.prevSpawnTime > this.interval && this.game.time.time - this.prevSpawnTime > this.minSpawnTime) {
                 this.prevSpawnTime = this.game.time.time;
-                this.nextSpawnTime = this.interval;
                 this.interval *= 0.96;
             }
 
