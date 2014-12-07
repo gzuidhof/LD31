@@ -41,7 +41,7 @@ var FlyingBlind;
         };
         //Generate (next) random color given golden ratio conjugate
         GoldenColorGenerator.golden_ratio_conjugate = 0.618033988749895;
-        GoldenColorGenerator.h = 0.82;
+        GoldenColorGenerator.h = 0.52;
         return GoldenColorGenerator;
     })();
     FlyingBlind.GoldenColorGenerator = GoldenColorGenerator;
@@ -117,30 +117,55 @@ var FlyingBlind;
 (function (FlyingBlind) {
     var Guidable = (function (_super) {
         __extends(Guidable, _super);
-        function Guidable(game, x, y, key, color) {
+        function Guidable(game, x, y, key, color, heli) {
             var _this = this;
             _super.call(this, game, x, y, key);
             this.hitboxRadius = 20;
             this.speed = 1;
             this.drawing = false;
             this.velocity = new Phaser.Point(0, 0);
+            this.landing = false;
             this.onMouseClick = function (guidable, pointer) {
-                console.log("click!");
+                if (_this.landing) {
+                    return;
+                }
+                console.log("click on plane!");
                 _this.drawing = true;
                 _this.navNodes = [];
             };
             this.onMouseRelease = function () {
-                console.log("release");
+                //console.log("release");
                 _this.drawing = false;
             };
             this.color = color;
             this.tint = color;
             this.anchor.setTo(0.5, 0.5);
-            this.scale.set(0.75, 0.75);
+            this.scale.set(0.70, 0.70);
+            this.heli = heli;
             this.game.physics.enable(this, Phaser.Physics.ARCADE);
             this.navNodes = [];
         }
+        Guidable.prototype.startLanding = function (direction, landCallback) {
+            this.landing = true;
+            this.drawing = false;
+            this.navNodes = [];
+            this.velocity = direction;
+            this.landCallback = landCallback;
+        };
         Guidable.prototype.update = function () {
+            if (this.landing) {
+                //  this.speed = 1;
+                this.speed -= 0.13 * (this.game.time.elapsed / 1000);
+                if (this.scale.getMagnitude() > 0.6) {
+                    this.scale.x -= 0.10 * (this.game.time.elapsed / 1000);
+                    this.scale.y -= 0.10 * (this.game.time.elapsed / 1000);
+                }
+                if (this.speed < 0.05) {
+                    console.log("cleaning up plane");
+                    this.landCallback(this);
+                }
+                this.navNodes = [];
+            }
             if (this.drawing) {
                 if (this.navNodes.length > 0) {
                     if (this.navNodes[this.navNodes.length - 1].distance(this.game.input.activePointer.position) > 15) {
@@ -155,6 +180,9 @@ var FlyingBlind;
                 this.navNodes.shift();
             }
             if (this.navNodes.length == 0) {
+                if (this.heli) {
+                    this.velocity = new Phaser.Point(0, 0);
+                }
             }
             else {
                 var vel = this.navNodes[0].clone().subtract(this.position.x, this.position.y);
@@ -181,7 +209,9 @@ var FlyingBlind;
             this.position = this.position.add(this.velocity.x, this.velocity.y);
         };
         Guidable.prototype.updateRotation = function () {
-            this.rotation = this.game.physics.arcade.moveToXY(this, this.x + this.velocity.x, this.y + this.velocity.y, this.speed, 10);
+            if (this.velocity.x != 0 && this.velocity.y != 0) {
+                this.rotation = this.game.physics.arcade.moveToXY(this, this.x + this.velocity.x, this.y + this.velocity.y, this.speed, 10);
+            }
         };
         return Guidable;
     })(Phaser.Sprite);
@@ -197,6 +227,11 @@ var FlyingBlind;
             this.gameObjects = [];
             this.guidables = [];
             this.runways = [];
+            this.onLandingFinished = function (guidable) {
+                //Todo points!
+                _this.removeFromList(guidable, _this.guidables);
+                _this.removeFromList(guidable, _this.gameObjects);
+            };
             this.handleMouseDown = function () {
                 _this.gameObjects.forEach(function (val) {
                     if (val.hitboxRadius && val.onMouseClick) {
@@ -221,13 +256,13 @@ var FlyingBlind;
             this.gameObjects.push(e);
             this.gameObjects.sort(function (a, b) { return a.z - b.z; });
         };
-        GameLevel.prototype.addGuidable = function (x, y, asset, color) {
-            var sprite = new FlyingBlind.Guidable(this.game, x, y, asset, color);
+        GameLevel.prototype.addGuidable = function (x, y, asset, color, heli) {
+            var sprite = new FlyingBlind.Guidable(this.game, x, y, asset, color, heli);
             this.addToGame(sprite);
             this.guidables.push(sprite);
         };
         GameLevel.prototype.addRunway = function (x, y, dx, dy, type, color) {
-            var sprite = new FlyingBlind.Runway(this.game, x, y, dx, dy);
+            var sprite = new FlyingBlind.Runway(this.game, x, y, dx, dy, color);
             this.addToGame(sprite);
             this.runways.push(sprite);
         };
@@ -236,9 +271,16 @@ var FlyingBlind;
             this.guidables.forEach(function (plane) {
                 _this.runways.forEach(function (runway) {
                     if (runway.checkLanded(plane)) {
+                        plane.startLanding(runway.direction, _this.onLandingFinished);
                     }
                 });
             });
+        };
+        GameLevel.prototype.removeFromList = function (el, l) {
+            var index = l.indexOf(el);
+            if (index > -1) {
+                l.splice(index, 1);
+            }
         };
         GameLevel.prototype.create = function () {
             var game = this.game;
@@ -347,6 +389,7 @@ var FlyingBlind;
             //  Load our actual games assets
             this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('background', 'assets/background.png');
+            this.load.image('tutlevel', 'assets/tutlevel.png');
             this.load.image('block', 'assets/block.png');
             this.load.image('ship1', 'assets/ship1.png');
             this.load.image('ship2', 'assets/ship2.png');
@@ -382,10 +425,9 @@ var FlyingBlind;
             this.addRunway(390, 100, 1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
             this.addRunway(821, 279, -1, 1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
             this.addRunway(392, 613, 1, -1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded());
-            //392 613
             _super.prototype.create.call(this);
-            this.addGuidable(50, 50, 'ship2', 0xffffff);
-            this.addGuidable(100, 50, 'ship2', 0xffffff);
+            this.addGuidable(50, 50, 'ship2', 0xeeeeee, false);
+            this.addGuidable(100, 50, 'ship2', 0xffffff, true);
         };
         return MainLevel;
     })(FlyingBlind.GameLevel);
@@ -488,17 +530,20 @@ var FlyingBlind;
 (function (FlyingBlind) {
     var Runway = (function (_super) {
         __extends(Runway, _super);
-        function Runway(game, x, y, dx, dy) {
+        function Runway(game, x, y, dx, dy, color) {
             _super.call(this, game, x, y, 'landicon');
             this.direction = new Phaser.Point(dx, dy);
             this.anchor.set(0.5, 0.5);
+            this.color = color;
+            this.tint = color;
+            this.alpha = 0;
             this.rotation = this.game.physics.arcade.angleToXY(this, this.x + this.direction.x, this.y + this.direction.y);
             this.scale = new Phaser.Point(0.2, 0.2);
         }
         Runway.prototype.checkLanded = function (plane) {
             if (this.position.distance(plane.position) < 18.5) {
                 if (Math.abs(this.angleBetween(plane.velocity, this.direction)) < 0.6) {
-                    console.log('angle' + this.angleBetween(plane.velocity, this.direction) + ' dirX ' + plane.velocity.x + ' dirY ' + plane.velocity.y);
+                    //console.log('angle' + this.angleBetween(plane.velocity, this.direction) + ' dirX ' + plane.velocity.x + ' dirY ' + plane.velocity.y);
                     return true;
                 }
             }

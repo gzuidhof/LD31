@@ -17,14 +17,14 @@
             this.gameObjects.sort((a, b) => a.z - b.z);
         }
 
-        addGuidable(x, y, asset, color: number) {
-            var sprite = new Guidable(this.game, x, y, asset, color);
+        addGuidable(x, y, asset, color: number, heli) {
+            var sprite = new Guidable(this.game, x, y, asset, color, heli);
             this.addToGame(sprite);
             this.guidables.push(sprite);
         }
 
         addRunway(x, y, dx, dy, type, color) {
-            var sprite = new Runway(this.game, x, y, dx, dy);
+            var sprite = new Runway(this.game, x, y, dx, dy, color);
             this.addToGame(sprite);
             this.runways.push(sprite);
         }
@@ -34,6 +34,7 @@
 
                 this.runways.forEach((runway) => {
                     if (runway.checkLanded(plane)) {
+                        plane.startLanding(runway.direction, this.onLandingFinished);
                         //console.log("LANDED!");
                     }
 
@@ -43,6 +44,21 @@
 
         }
 
+        onLandingFinished = (guidable: Guidable) => {
+
+            //Todo points!
+
+            this.removeFromList(guidable, this.guidables);
+            this.removeFromList(guidable, this.gameObjects);
+        }
+
+
+        removeFromList<T>(el: T, l: T[]) {
+            var index = l.indexOf(el);
+            if (index > -1) {
+                l.splice(index, 1);
+            }
+        }
 
 
 

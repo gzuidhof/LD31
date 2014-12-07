@@ -10,13 +10,12 @@
 
             this.addRunway(821, 279, -1, 1, 'runway', GoldenColorGenerator.generateColor32bitEncoded());
             this.addRunway(392, 613, 1, -1, 'runway', GoldenColorGenerator.generateColor32bitEncoded());
-            //392 613
+            
 
             super.create();
 
-            this.addGuidable(50, 50, 'ship2', 0xffffff);
-            this.addGuidable(100, 50, 'ship2', 0xffffff);
-
+            this.addGuidable(50, 50, 'ship2', 0xeeeeee, false);
+            this.addGuidable(100, 50, 'ship2', 0xffffff, true);
 
 
         }
