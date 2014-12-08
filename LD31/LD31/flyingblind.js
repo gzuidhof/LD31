@@ -298,7 +298,13 @@ var FlyingBlind;
             this.minSpawnTime = 1000;
         }
         GameLevel.prototype.create = function () {
+            var _this = this;
             muteMethod = this.mute;
+            this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.M]);
+            var key = this.input.keyboard.addKey(Phaser.Keyboard.M);
+            key.onDown.add(function () {
+                _this.mute();
+            });
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);

@@ -44,6 +44,11 @@ module FlyingBlind {
 
         create() {
             muteMethod = this.mute;
+
+            this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.M]);
+            var key = this.input.keyboard.addKey(Phaser.Keyboard.M);
+            key.onDown.add(() => { this.mute() });
+
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
