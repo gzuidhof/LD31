@@ -329,7 +329,7 @@ module FlyingBlind {
             }
             if (this.game.time.time - this.prevSpawnTime > this.interval && this.game.time.time - this.prevSpawnTime > this.minSpawnTime) {
                 this.prevSpawnTime = this.game.time.time;
-                this.interval *= 0.97;
+                this.interval *= 0.952;
             }
 
             else {
