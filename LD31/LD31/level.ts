@@ -1,5 +1,17 @@
-﻿module FlyingBlind {
+﻿
+
+module FlyingBlind {
+
+    var muteMethod;
+
+
     export class GameLevel extends Phaser.State {
+
+
+        mute() {
+            this.music.volume > 0 ? this.music.volume = 0 : this.music.volume = 0.5;
+        }
+
 
         background: Phaser.Sprite;
         windowSprite: Phaser.Sprite;
@@ -31,6 +43,7 @@
 
 
         create() {
+            muteMethod = this.mute;
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);

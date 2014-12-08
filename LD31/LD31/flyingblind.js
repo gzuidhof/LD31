@@ -239,6 +239,7 @@ var FlyingBlind;
 })(FlyingBlind || (FlyingBlind = {}));
 var FlyingBlind;
 (function (FlyingBlind) {
+    var muteMethod;
     var GameLevel = (function (_super) {
         __extends(GameLevel, _super);
         function GameLevel() {
@@ -293,7 +294,11 @@ var FlyingBlind;
             this.interval = 13500;
             this.minSpawnTime = 1000;
         }
+        GameLevel.prototype.mute = function () {
+            this.music.volume > 0 ? this.music.volume = 0 : this.music.volume = 0.5;
+        };
         GameLevel.prototype.create = function () {
+            muteMethod = this.mute;
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
