@@ -302,7 +302,7 @@ var FlyingBlind;
             this.landSound = game.add.audio('land');
             this.incomingSound = game.add.audio('incoming', 0.4);
             this.scoreSound = game.add.audio('score', 0.6);
-            this.music = game.add.audio('music', 1, true);
+            this.music = game.add.audio('music', 0.55, true);
             this.music.play();
             this.renderer.drawAllNoMask(this.gameObjects);
             this.game.input.onDown.add(this.handleMouseDown);
