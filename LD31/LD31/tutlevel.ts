@@ -14,11 +14,16 @@
             this.addRunway(295, 504, 681-295, 299-504, 'runway', GoldenColorGenerator.generateColor32bitEncoded(), false);
 
             super.create();
-
-            this.addGuidable(50, 50, 0xeeeeee, false);
-            this.addGuidable(100, 50, 0xffffff, true);
-
+            this.minSpawnTime = 2;
+            this.interval = 14000;
         }
+
+        update() {
+            super.update();
+            this.spawner(0.50);
+            
+        }
+
 
     }
 

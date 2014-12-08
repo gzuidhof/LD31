@@ -14,24 +14,89 @@
 
         explosionSound: Phaser.Sound;
 
+        scoreSound: Phaser.Sound;
+        landSound: Phaser.Sound;
+        incomingSound: Phaser.Sound;
+
+        score: number = 0;
+        crashes: number = 0;
+        maxCrashes: number = 1;
+
+        scoreText: Phaser.Text;
+        crashText: Phaser.Text;
+
+        gameOver: boolean = false;
+
+        music: Phaser.Sound;
+
+
         create() {
             var game = this.game;
             game.physics.startSystem(Phaser.Physics.ARCADE);
             this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
             this.renderer = new MemoryRenderer(game, this.maskRect);
+
             this.explosionSound = game.add.audio('explosion', 0.7);
+            this.landSound = game.add.audio('land');
+            this.incomingSound = game.add.audio('incoming', 0.4);
+            this.scoreSound = game.add.audio('score', 0.6);
+
+            this.music = game.add.audio('music', 1, true);
+            this.music.play();
 
             this.renderer.drawAllNoMask(this.gameObjects);
-
-            //this.game.input.ad
+            
             this.game.input.onDown.add(this.handleMouseDown);
             this.game.input.onUp.add(this.handleMouseUp);
 
             this.windowSprite = this.game.add.sprite(0, 0, 'window');
             this.windowSprite.anchor.set(0.5, 0.5);
 
+            var style = { font: "34px Arial", fill: "#eeeeee", dropShadow: true, dropShadowDistance:10, align: "center" };
+            this.scoreText = game.add.text(30, 0, "", style);
+            this.crashText = game.add.text(30, 40, "", style);
+            
+            
+
+
         }
 
+        onGameOver() {
+            this.maskRect.width = 5000;
+            this.maskRect.height = 5000;
+            this.maskRect.centerOn(this.input.x, this.input.y);
+
+            var style = { font: "84px Arial", fill: "#eeeeee", dropShadow: true, align: "center" };
+            this.game.add.text(340, 300, "Game over!", style);
+            var style = { font: "44px Arial", fill: "#dddddd", dropShadow: true, align: "center" };
+            this.game.add.text(340, 380, "Score: " + this.score, style);
+            this.game.add.text(340, 420, "Refresh to play again", style);
+
+            this.gameOver = true;
+
+        }
+
+        onScore(heli: boolean) {
+            if (heli) {
+                this.score += 6;
+               
+            }
+            else {
+                this.score += 10;
+            }
+
+            this.scoreText.setText('Score: ' + this.score);
+
+
+        }
+
+        onCrash() {
+            this.crashes++;
+            this.crashText.setText('Crashes: ' + this.crashes);
+            if (this.crashes >= this.maxCrashes) {
+                this.onGameOver();
+            }
+        }
 
 
         addToGame(e: Phaser.Sprite) {
@@ -56,9 +121,10 @@
             this.guidables.forEach((plane) => {
 
                 this.runways.forEach((runway) => {
-                    if (runway.checkLanded(plane)) {
+                    if (runway.checkLanded(plane) && !plane.landing) {
                         plane.startLanding(runway.direction, this.onLandingFinished);
                         //console.log("LANDED!");
+                        this.landSound.play();
                     }
 
                 });
@@ -127,6 +193,8 @@
             t.onComplete.add(() => {
                 this.game.world.remove(indication);
             });
+
+            this.onCrash();
         }
 
         onExplosionFinish = (guidable: Guidable) => {
@@ -144,7 +212,8 @@
 
         onLandingFinished = (guidable: Guidable) => {
 
-            //Todo points!
+            this.onScore(guidable.heli);
+            this.scoreSound.play();
 
             this.removeFromList(guidable, this.guidables);
             this.removeFromList(guidable, this.gameObjects);
@@ -200,17 +269,19 @@
             this.maskRect.centerOn (curPos.x + this.velocity.x, (curPos.y + this.velocity.y)) ;
             this.windowSprite.position.set(this.maskRect.centerX, this.maskRect.centerY);
 
-            this.checkForLandings();
-            this.checkForCollisions();
+            if (!this.gameOver) {
 
-            for (var i = 0; i < this.gameObjects.length; i++) {
-                this.gameObjects[i].update();
+                this.checkForLandings();
+                this.checkForCollisions();
+
+                for (var i = 0; i < this.gameObjects.length; i++) {
+                    this.gameObjects[i].update();
+                }
+
+                this.renderer.update(this.gameObjects);
+
+
             }
-
-            this.renderer.update(this.gameObjects);
-
-
-           
             
 
         }
@@ -229,10 +300,73 @@
         }
 
 
+        prevSpawnTime: number = 0;
+        nextSpawnTime: number = 3000;
+        interval: number = 13500;
+        minSpawnTime = 1000;
 
+        spawner(distribution) {
+            if (this.gameOver) {
+                return;
+            }
+            if (this.game.time.time - this.prevSpawnTime > this.interval && this.game.time.time - this.prevSpawnTime > this.minSpawnTime) {
+                this.prevSpawnTime = this.game.time.time;
+                this.interval *= 0.97;
+            }
+
+            else {
+                return;
+            }
+
+            this.incomingSound.play();
+
+            var rng = Math.random();
+            var heli: boolean = false; //isHeli
+
+            if (rng > distribution) {
+                heli = true;
+            }
+            rng = Math.random();
+
+            var x;
+            var y;
+            var rng2 = Math.random();
+
+            if (rng < 0.20) {
+                x = -70;
+                y = rng2 * this.game.height;
+            }
+            else if (rng < 0.5) {
+                y = this.game.height + 70;
+                x = rng2 * this.game.width;
+
+            }
+            else if (rng < 0.8) {
+                y = -70;
+                x = rng2 * this.game.width;
+            }
+            else {
+                x = this.game.width + 70;
+                y = rng2 * this.game.height;
+            }
+
+            var direction = new Phaser.Point();
+            direction.x = Math.random() + 0.05;
+            direction.y = Math.random() + 0.05;
+            //direction.x = this.game.width * 0.5 + Math.random() * 800 - 400 - x;
+            //direction.y = this.game.height * 0.5 + Math.random() * 550 - 225 - y;
+
+            this.spawn(x, y, 0xffffff, direction, heli);
+        }
     }
 
 
 
 
+
+
+
+
+
 }
+

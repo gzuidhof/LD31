@@ -247,6 +247,10 @@ var FlyingBlind;
             this.gameObjects = [];
             this.guidables = [];
             this.runways = [];
+            this.score = 0;
+            this.crashes = 0;
+            this.maxCrashes = 1;
+            this.gameOver = false;
             this.onExplosionFinish = function (guidable) {
                 if (guidable.heli) {
                     setInterval(function () {
@@ -260,7 +264,8 @@ var FlyingBlind;
                 }
             };
             this.onLandingFinished = function (guidable) {
-                //Todo points!
+                _this.onScore(guidable.heli);
+                _this.scoreSound.play();
                 _this.removeFromList(guidable, _this.guidables);
                 _this.removeFromList(guidable, _this.gameObjects);
             };
@@ -283,6 +288,10 @@ var FlyingBlind;
             this.maxSpeed = 10;
             this.velocity = new Phaser.Point(0, 0);
             this.snapiness = 0.008;
+            this.prevSpawnTime = 0;
+            this.nextSpawnTime = 3000;
+            this.interval = 13500;
+            this.minSpawnTime = 1000;
         }
         GameLevel.prototype.create = function () {
             var game = this.game;
@@ -290,12 +299,46 @@ var FlyingBlind;
             this.maskRect = new Phaser.Rectangle(0, 0, 436, 300);
             this.renderer = new FlyingBlind.MemoryRenderer(game, this.maskRect);
             this.explosionSound = game.add.audio('explosion', 0.7);
+            this.landSound = game.add.audio('land');
+            this.incomingSound = game.add.audio('incoming', 0.4);
+            this.scoreSound = game.add.audio('score', 0.6);
+            this.music = game.add.audio('music', 1, true);
+            this.music.play();
             this.renderer.drawAllNoMask(this.gameObjects);
-            //this.game.input.ad
             this.game.input.onDown.add(this.handleMouseDown);
             this.game.input.onUp.add(this.handleMouseUp);
             this.windowSprite = this.game.add.sprite(0, 0, 'window');
             this.windowSprite.anchor.set(0.5, 0.5);
+            var style = { font: "34px Arial", fill: "#eeeeee", dropShadow: true, dropShadowDistance: 10, align: "center" };
+            this.scoreText = game.add.text(30, 0, "", style);
+            this.crashText = game.add.text(30, 40, "", style);
+        };
+        GameLevel.prototype.onGameOver = function () {
+            this.maskRect.width = 5000;
+            this.maskRect.height = 5000;
+            this.maskRect.centerOn(this.input.x, this.input.y);
+            var style = { font: "84px Arial", fill: "#eeeeee", dropShadow: true, align: "center" };
+            this.game.add.text(340, 300, "Game over!", style);
+            var style = { font: "44px Arial", fill: "#dddddd", dropShadow: true, align: "center" };
+            this.game.add.text(340, 380, "Score: " + this.score, style);
+            this.game.add.text(340, 420, "Refresh to play again", style);
+            this.gameOver = true;
+        };
+        GameLevel.prototype.onScore = function (heli) {
+            if (heli) {
+                this.score += 6;
+            }
+            else {
+                this.score += 10;
+            }
+            this.scoreText.setText('Score: ' + this.score);
+        };
+        GameLevel.prototype.onCrash = function () {
+            this.crashes++;
+            this.crashText.setText('Crashes: ' + this.crashes);
+            if (this.crashes >= this.maxCrashes) {
+                this.onGameOver();
+            }
         };
         GameLevel.prototype.addToGame = function (e) {
             this.gameObjects.push(e);
@@ -316,8 +359,10 @@ var FlyingBlind;
             var _this = this;
             this.guidables.forEach(function (plane) {
                 _this.runways.forEach(function (runway) {
-                    if (runway.checkLanded(plane)) {
+                    if (runway.checkLanded(plane) && !plane.landing) {
                         plane.startLanding(runway.direction, _this.onLandingFinished);
+                        //console.log("LANDED!");
+                        _this.landSound.play();
                     }
                 });
             });
@@ -369,6 +414,7 @@ var FlyingBlind;
             t.onComplete.add(function () {
                 _this.game.world.remove(indication);
             });
+            this.onCrash();
         };
         GameLevel.prototype.removeFromList = function (el, l) {
             var index = l.indexOf(el);
@@ -388,12 +434,14 @@ var FlyingBlind;
             this.velocity = this.interpPoints(this.velocity, desiredVel, this.game.time.elapsed * this.snapiness);
             this.maskRect.centerOn(curPos.x + this.velocity.x, (curPos.y + this.velocity.y));
             this.windowSprite.position.set(this.maskRect.centerX, this.maskRect.centerY);
-            this.checkForLandings();
-            this.checkForCollisions();
-            for (var i = 0; i < this.gameObjects.length; i++) {
-                this.gameObjects[i].update();
+            if (!this.gameOver) {
+                this.checkForLandings();
+                this.checkForCollisions();
+                for (var i = 0; i < this.gameObjects.length; i++) {
+                    this.gameObjects[i].update();
+                }
+                this.renderer.update(this.gameObjects);
             }
-            this.renderer.update(this.gameObjects);
         };
         GameLevel.prototype.render = function () {
             this.renderer.render();
@@ -404,6 +452,50 @@ var FlyingBlind;
         GameLevel.prototype.interp = function (a, b, t) {
             t = Math.max(0, Math.min(t, 1));
             return a + t * (b - a);
+        };
+        GameLevel.prototype.spawner = function (distribution) {
+            if (this.gameOver) {
+                return;
+            }
+            if (this.game.time.time - this.prevSpawnTime > this.interval && this.game.time.time - this.prevSpawnTime > this.minSpawnTime) {
+                this.prevSpawnTime = this.game.time.time;
+                this.interval *= 0.97;
+            }
+            else {
+                return;
+            }
+            this.incomingSound.play();
+            var rng = Math.random();
+            var heli = false; //isHeli
+            if (rng > distribution) {
+                heli = true;
+            }
+            rng = Math.random();
+            var x;
+            var y;
+            var rng2 = Math.random();
+            if (rng < 0.20) {
+                x = -70;
+                y = rng2 * this.game.height;
+            }
+            else if (rng < 0.5) {
+                y = this.game.height + 70;
+                x = rng2 * this.game.width;
+            }
+            else if (rng < 0.8) {
+                y = -70;
+                x = rng2 * this.game.width;
+            }
+            else {
+                x = this.game.width + 70;
+                y = rng2 * this.game.height;
+            }
+            var direction = new Phaser.Point();
+            direction.x = Math.random() + 0.05;
+            direction.y = Math.random() + 0.05;
+            //direction.x = this.game.width * 0.5 + Math.random() * 800 - 400 - x;
+            //direction.y = this.game.height * 0.5 + Math.random() * 550 - 225 - y;
+            this.spawn(x, y, 0xffffff, direction, heli);
         };
         return GameLevel;
     })(Phaser.State);
@@ -438,21 +530,50 @@ var FlyingBlind;
             _super.apply(this, arguments);
         }
         MainMenu.prototype.create = function () {
-            this.background = this.add.sprite(0, 0, 'titlepage');
-            this.background.alpha = 0;
-            this.logo = this.add.sprite(this.world.centerX, -300, 'logo');
-            this.logo.anchor.setTo(0.5, 0.5);
-            this.add.tween(this.background).to({ alpha: 1 }, 2000, Phaser.Easing.Bounce.InOut, true);
-            this.add.tween(this.logo).to({ y: 220 }, 2000, Phaser.Easing.Elastic.Out, true, 2000);
+            var _this = this;
+            var s = this.add.sprite(this.world.centerX, this.world.centerY, 'tut1');
+            s.anchor.set(0.5, 0.5);
+            //this.add.tween(this.logo).to({ y: 220 }, 2000, Phaser.Easing.Elastic.Out, true, 2000);
+            this.input.onDown.addOnce(function () {
+                _this.game.world.remove(s);
+                _this.next();
+            }, this);
+        };
+        MainMenu.prototype.next = function () {
+            var _this = this;
+            var s = this.add.sprite(this.world.centerX, this.world.centerY, 'tut2');
+            s.anchor.set(0.5, 0.5);
+            this.input.onDown.addOnce(function () {
+                _this.game.world.remove(s);
+                _this.showMaps();
+            }, this);
+        };
+        MainMenu.prototype.showMaps = function () {
+            this.map1 = this.add.sprite(this.world.centerX, this.world.centerY + 144, 'background');
+            this.map1.scale.set(0.4, 0.4);
+            this.map2 = this.add.sprite(this.world.centerX, this.world.centerY - 144, 'tutlevel');
+            this.map2.scale.set(0.4, 0.4);
+            this.map1.alpha = 0;
+            this.map2.alpha = 0;
+            this.map1.anchor.set(0.5, 0.5);
+            this.map2.anchor.set(0.5, 0.5);
+            this.add.tween(this.map1).to({ alpha: 1 }, 1000, Phaser.Easing.Cubic.In, true);
+            this.add.tween(this.map2).to({ alpha: 1 }, 1000, Phaser.Easing.Cubic.In, true);
             this.input.onDown.addOnce(this.fadeOut, this);
         };
         MainMenu.prototype.fadeOut = function () {
-            this.add.tween(this.background).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
-            var tween = this.add.tween(this.logo).to({ y: 800 }, 2000, Phaser.Easing.Linear.None, true);
-            tween.onComplete.add(this.startGame, this);
+            var _this = this;
+            var tween = this.add.tween(this.map1).to({ y: this.map1.position.y + 1000 }, 2000, Phaser.Easing.Sinusoidal.Out, true);
+            var tween = this.add.tween(this.map2).to({ y: this.map1.position.y - 1000 }, 2000, Phaser.Easing.Sinusoidal.Out, true);
+            if (this.input.y > this.world.centerY) {
+                tween.onComplete.add(function () { return _this.startGame('MainLevel'); }, this);
+            }
+            else {
+                tween.onComplete.add(function () { return _this.startGame('TutLevel'); }, this);
+            }
         };
-        MainMenu.prototype.startGame = function () {
-            this.game.state.start('Level1', true, false);
+        MainMenu.prototype.startGame = function (level) {
+            this.game.state.start(level, true, false);
         };
         return MainMenu;
     })(Phaser.State);
@@ -470,19 +591,16 @@ var FlyingBlind;
             this.preloadBar = this.add.sprite(200, 250, 'preloadBar');
             this.load.setPreloadSprite(this.preloadBar);
             //  Load our actual games assets
-            this.load.audio('music', 'assets/title.mp3', true);
             this.load.image('background', 'assets/background.png');
             this.load.image('tutlevel', 'assets/tutlevel.png');
-            this.load.image('block', 'assets/block.png');
-            this.load.image('ship1', 'assets/ship1.png');
             this.load.image('ship2', 'assets/ship2.png');
             this.load.image('window', 'assets/window.png');
-            this.load.image('runway', 'assets/runway.png');
-            this.load.image('helipad', 'assets/helipad.png');
             this.load.image('landicon', 'assets/landicon.png');
             this.load.image('circle', 'assets/circle.png');
             this.load.image('heli', 'assets/heli.png');
             this.load.image('explosionicon', 'assets/explosionicon.png');
+            this.load.image('tut1', 'assets/tut1.png');
+            this.load.image('tut2', 'assets/tut2.png');
             this.load.image('heli0', 'assets/heli0.png');
             this.load.image('heli1', 'assets/heli1.png');
             this.load.image('heli2', 'assets/heli2.png');
@@ -490,6 +608,10 @@ var FlyingBlind;
             this.load.image('heli4', 'assets/heli4.png');
             this.load.image('heli5', 'assets/heli5.png');
             this.load.audio('explosion', 'assets/explosion.wav', true);
+            this.load.audio('music', 'assets/music.ogg', true);
+            this.load.audio('land', 'assets/land.ogg', true);
+            this.load.audio('score', 'assets/score.ogg', true);
+            this.load.audio('incoming', 'assets/test.ogg', true);
         };
         Preloader.prototype.create = function () {
             //var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -497,9 +619,7 @@ var FlyingBlind;
             this.startMainMenu();
         };
         Preloader.prototype.startMainMenu = function () {
-            // this.game.state.start('MainMenu', true, false);
-            this.game.state.start('MainLevel', true, false);
-            //this.game.state.start('TutLevel', true, false);
+            this.game.state.start('MainMenu', true, false);
         };
         return Preloader;
     })(Phaser.State);
@@ -511,10 +631,6 @@ var FlyingBlind;
         __extends(MainLevel, _super);
         function MainLevel() {
             _super.apply(this, arguments);
-            this.prevSpawnTime = 0;
-            this.nextSpawnTime = 3000;
-            this.interval = 15500;
-            this.minSpawnTime = 1000;
         }
         MainLevel.prototype.create = function () {
             this.background = this.game.make.sprite(0, 0, 'background');
@@ -526,52 +642,10 @@ var FlyingBlind;
             this.addRunway(307, 288, 0, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
             this.addRunway(307, 374, 0, 0, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
             _super.prototype.create.call(this);
-            this.addGuidable(50, 50, 0xffffff, false);
-            this.addGuidable(100, 50, 0xffffff, true);
         };
         MainLevel.prototype.update = function () {
             _super.prototype.update.call(this);
-            this.spawner();
-        };
-        MainLevel.prototype.spawner = function () {
-            if (this.game.time.time - this.prevSpawnTime > this.interval && this.game.time.time - this.prevSpawnTime > this.minSpawnTime) {
-                this.prevSpawnTime = this.game.time.time;
-                this.interval *= 0.96;
-            }
-            else {
-                return;
-            }
-            var rng = Math.random();
-            var heli = false; //isHeli
-            if (rng > 0.75) {
-                heli = true;
-            }
-            rng = Math.random();
-            var x;
-            var y;
-            var rng2 = Math.random();
-            if (rng < 0.20) {
-                x = -70;
-                y = rng2 * this.game.height;
-            }
-            else if (rng < 0.5) {
-                y = this.game.height + 70;
-                x = rng2 * this.game.width;
-            }
-            else if (rng < 0.8) {
-                y = -70;
-                x = rng2 * this.game.width;
-            }
-            else {
-                x = this.game.width + 70;
-                y = rng2 * this.game.height;
-            }
-            var direction = new Phaser.Point();
-            direction.x = Math.random();
-            direction.y = Math.random();
-            //direction.x = this.game.width * 0.5 + Math.random() * 800 - 400 - x;
-            //direction.y = this.game.height * 0.5 + Math.random() * 550 - 225 - y;
-            this.spawn(x, y, 0xffffff, direction, heli);
+            this.spawner(0.75);
         };
         return MainLevel;
     })(FlyingBlind.GameLevel);
@@ -718,8 +792,12 @@ var FlyingBlind;
             this.addRunway(307, 341, 1, -1, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), true);
             this.addRunway(295, 504, 681 - 295, 299 - 504, 'runway', FlyingBlind.GoldenColorGenerator.generateColor32bitEncoded(), false);
             _super.prototype.create.call(this);
-            this.addGuidable(50, 50, 0xeeeeee, false);
-            this.addGuidable(100, 50, 0xffffff, true);
+            this.minSpawnTime = 2;
+            this.interval = 14000;
+        };
+        TutLevel.prototype.update = function () {
+            _super.prototype.update.call(this);
+            this.spawner(0.50);
         };
         return TutLevel;
     })(FlyingBlind.GameLevel);
