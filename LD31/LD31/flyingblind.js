@@ -245,6 +245,9 @@ var FlyingBlind;
         function GameLevel() {
             var _this = this;
             _super.apply(this, arguments);
+            this.mute = function () {
+                _this.music.volume > 0 ? _this.music.volume = 0 : _this.music.volume = 0.5;
+            };
             this.gameObjects = [];
             this.guidables = [];
             this.runways = [];
@@ -294,9 +297,6 @@ var FlyingBlind;
             this.interval = 13500;
             this.minSpawnTime = 1000;
         }
-        GameLevel.prototype.mute = function () {
-            this.music.volume > 0 ? this.music.volume = 0 : this.music.volume = 0.5;
-        };
         GameLevel.prototype.create = function () {
             muteMethod = this.mute;
             var game = this.game;

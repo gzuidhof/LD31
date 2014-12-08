@@ -8,7 +8,7 @@ module FlyingBlind {
     export class GameLevel extends Phaser.State {
 
 
-        mute() {
+        mute = () => {
             this.music.volume > 0 ? this.music.volume = 0 : this.music.volume = 0.5;
         }
 
