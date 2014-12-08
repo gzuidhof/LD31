@@ -253,7 +253,7 @@ var FlyingBlind;
             this.runways = [];
             this.score = 0;
             this.crashes = 0;
-            this.maxCrashes = 1;
+            this.maxCrashes = 10;
             this.gameOver = false;
             this.onExplosionFinish = function (guidable) {
                 if (guidable.heli) {

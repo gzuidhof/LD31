@@ -32,7 +32,7 @@ module FlyingBlind {
 
         score: number = 0;
         crashes: number = 0;
-        maxCrashes: number = 1;
+        maxCrashes: number = 10;
 
         scoreText: Phaser.Text;
         crashText: Phaser.Text;
